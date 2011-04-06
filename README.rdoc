@@ -24,7 +24,7 @@ You can add it to your Gemfile:
 
 ==== HTTP client
 
-Decode an image from a url
+Decode a captcha image from a url:
 
 	require 'deathbycaptcha'
 	
@@ -36,7 +36,7 @@ Decode an image from a url
 	puts "captcha id: #{response['captcha']}, solution: #{response['text']}, is_correct: #{response['is_correct']}}"
 
 
-Get the solution of a captcha
+Get the solution of a captcha:
 
 	require 'deathbycaptcha'
 	
