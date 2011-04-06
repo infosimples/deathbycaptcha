@@ -1,0 +1,41 @@
+== DeathByCaptcha
+
+DeathByCaptcha is a Ruby API for acessing the http://www.deathbycaptcha.com services.
+
+It supports HTTP and socket-based connections, with the latter being recommended for having faster responses and overall better performance.
+
+When using socket connections, make sure that outgoing TCP traffic to *api.deathbycaptcha.com* to the ports range in 8123-8130 is not blocked by your firewall.
+
+=== Thread-safety note
+
+The API is thread-safe, which means it is perfectly fine to share a client instance between multiple threads.
+
+=== Installation
+
+You can install the latest DeathByCaptcha gem with:
+
+	gem install deathbycaptcha
+
+You can add it to your Gemfile:
+
+	gem 'deathbycaptcha'
+
+=== Examples
+
+==== HTTP client
+
+Decode an image from a url
+
+	require 'deathbycaptcha'
+	
+	client = DeathByCaptcha.http_client('myusername', 'mypassword')
+	client.config.is_verbose = true
+	response = client.decode 'http://www.phpcaptcha.org/securimage/securimage_show.php'
+	
+	puts "captcha id: #{response['captcha']}, solution: #{response['text']}, is_correct: #{response['is_correct']}}"
+
+
+Get the solution of a captcha
+
+	puts client.get_captcha('130920620')['text']
+
