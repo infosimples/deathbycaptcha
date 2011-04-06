@@ -4,7 +4,7 @@ DeathByCaptcha is a Ruby API for acessing the http://www.deathbycaptcha.com serv
 
 It supports HTTP and socket-based connections, with the latter being recommended for having faster responses and overall better performance.
 
-When using socket connections, make sure that outgoing TCP traffic to *api.deathbycaptcha.com* to the ports range in 8123-8130 is not blocked by your firewall.
+When using socket connections, make sure that outgoing TCP traffic to <b>api.deathbycaptcha.com</b> to the ports range in <b>8123-8130</b> is not blocked by your firewall.
 
 === Thread-safety note
 
@@ -37,5 +37,7 @@ Decode an image from a url
 
 Get the solution of a captcha
 
-	puts client.get_captcha('130920620')['text']
+	require 'deathbycaptcha'
+	client = DeathByCaptcha.http_client('myusername', 'mypassword')
+	puts client.get_captcha('130920620')['text'] # where 130920620 is a captcha id
 
