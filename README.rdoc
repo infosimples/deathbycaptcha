@@ -51,4 +51,4 @@ Get the solution of a captcha:
 
 == License
 
-MIT License.
+MIT License. Copyright (C) 2011 by Infosimples. http://www.infosimples.com.br/

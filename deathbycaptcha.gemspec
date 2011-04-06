@@ -3,16 +3,15 @@ $:.push File.expand_path("../lib", __FILE__)
 require "deathbycaptcha/version"
 
 Gem::Specification.new do |s|
-  s.add_dependency 'rest-client'
-  s.add_dependency 'addressable'
-  s.add_dependency 'json'
+  s.add_dependency 'rest-client', '~> 1.6.1'
+  s.add_dependency 'json', '~> 1.4.6'
   
   s.name        = "deathbycaptcha"
   s.version     = DeathByCaptcha::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Rafael Barbolo Lopes, Rafael Ivan Garcia"]
-  s.email       = []
-  s.homepage    = ""
+  s.email       = ["tech@infosimples.com.br"]
+  s.homepage    = "http://github.com/infosimples/deathbycaptcha"
   s.summary     = %q{Ruby API for DeathByCaptcha (Captcha Solver as a Service)}
   s.description = %q{Ruby API for DeathByCaptcha (Captcha Solver as a Service)}
 

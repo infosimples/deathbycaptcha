@@ -84,7 +84,7 @@ module DeathByCaptcha
     # whether the CAPTCHA is case-sensitive or not.  Returns CAPTCHA details
     # on success.
     #
-    def upload(captcha, is_case_sensitive=false)
+    def upload(captcha, options={})
       raise DeathByCaptcha::Errors::NotImplemented
     end
     

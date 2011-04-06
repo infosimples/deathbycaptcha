@@ -25,12 +25,17 @@ module DeathByCaptcha
       not call("captcha/#{cid}/remove", userpwd)['captcha']
     end
     
+    def a(nome, test=false, valor="verdade")
+      puts nome,test,valor
+    end
+    
     protected
-    def upload(captcha, is_case_sensitive=false, is_raw_content=false)
+    def upload(captcha, options={})
+      options = {:is_case_sensitive => false, :is_raw_content => false}.merge(options)
       data = userpwd
       data[:swid] = config.software_vendor_id
-      data[:is_case_sensitive] = is_case_sensitive ? 1 : 0
-      data[:captchafile] = load_file(captcha, is_raw_content)
+      data[:is_case_sensitive] = options[:is_case_sensitive] ? 1 : 0
+      data[:captchafile] = load_file(captcha, options[:is_raw_content])
       response = call('captcha', data)
       return response if response['captcha']
     end
