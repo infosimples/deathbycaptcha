@@ -97,9 +97,10 @@ module DeathByCaptcha
     # timeout (in seconds).  Removes unsolved CAPTCHAs.  Returns CAPTCHA
     # details if (correctly) solved.
     #
-    def decode(captcha, timeout=@config.default_timeout, is_case_sensitive=false)
-      deadline = Time.now + timeout
-      c = upload(captcha, is_case_sensitive)
+    def decode(captcha, options={})
+      options = {:timeout => config.default_timeout, :is_case_sensitive => false, :is_raw_content => false}.merge(options)
+      deadline = Time.now + options[:timeout]
+      c = upload(captcha, options)
       if c
         while deadline > Time.now and not c['text']
           sleep(config.polls_interval)
