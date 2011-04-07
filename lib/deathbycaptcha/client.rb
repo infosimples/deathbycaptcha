@@ -102,7 +102,7 @@ module DeathByCaptcha
       deadline = Time.now + options[:timeout]
       c = upload(captcha, options)
       if c
-        while deadline > Time.now and not c['text']
+        while deadline > Time.now and (c['text'].nil? or c['text'].empty?)
           sleep(config.polls_interval)
           c = get_captcha(c['captcha'])
         end
@@ -120,7 +120,11 @@ module DeathByCaptcha
       
     end
     
+    #
+    # Protected methods.
+    #
     protected
+    
     #
     # Return a hash with the user's credentials
     #
@@ -132,13 +136,17 @@ module DeathByCaptcha
       end
     end
     
+    #
+    # Private methods.
+    #
     private
+    
     #
     # Log a command and a message
     #
     def log(cmd, msg='')
       if @config.is_verbose
-        @logger.info msg
+        @logger.info "#{cmd}: #{msg}"
       end
     end
 

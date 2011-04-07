@@ -29,7 +29,11 @@ module DeathByCaptcha
       puts nome,test,valor
     end
     
+    #
+    # Protected methods.
+    #
     protected
+    
     def upload(captcha, options={})
       options = {:is_case_sensitive => false, :is_raw_content => false}.merge(options)
       data = userpwd
@@ -40,7 +44,11 @@ module DeathByCaptcha
       return response if response['captcha']
     end
     
+    #
+    # Private methods.
+    #
     private
+    
     def call(cmd, payload={}, headers={})
       headers['Accept'] = config.http_response_type if headers['Accept'].nil?
       headers['User-Agent'] = config.api_version if headers['User-Agent'].nil?
