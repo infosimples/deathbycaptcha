@@ -38,7 +38,7 @@ You can add it to your Gemfile:
 	
 ==== Verbose mode (for debugging purposes)
 
-	client.is_verbose = true
+	client.config.is_verbose = true
 	
 ==== Decoding captcha
 
@@ -66,7 +66,7 @@ You can add it to your Gemfile:
 
 	raw_content = File.open('path/to/my/captcha/file', 'r').read
 
-	response = client.decode(raw_content, :raw_content => true)
+	response = client.decode(raw_content, :is_raw_content => true)
 
 	puts "captcha id: #{response['captcha']}, solution: #{response['text']}, is_correct: #{response['is_correct']}}"
 

@@ -164,7 +164,7 @@ module DeathByCaptcha
       if is_raw_content
         # Create a temporary file, write the raw content and return it
         tmp_file_path = File.join(Dir.tmpdir, "captcha_#{Time.now.to_i}_#{rand}")
-        File.open(tmp_file_path, 'w') {|f| f.write captcha}
+        File.open(tmp_file_path, 'wb') {|f| f.write captcha}
         file = File.open(tmp_file_path, 'r')
         
       elsif captcha.kind_of? File
