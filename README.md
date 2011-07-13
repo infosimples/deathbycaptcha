@@ -1,4 +1,5 @@
-== DeathByCaptcha
+DeathByCaptcha
+==============
 
 DeathByCaptcha is a Ruby API for acessing the http://www.deathbycaptcha.com services.
 
@@ -6,11 +7,13 @@ It supports HTTP and socket-based connections, with the latter being recommended
 
 When using socket connections, make sure that outgoing TCP traffic to <b>api.deathbycaptcha.com</b> to the ports range in <b>8123-8130</b> is not blocked by your firewall.
 
-=== Thread-safety note
+Thread-safety note
+------------------
 
 The API is thread-safe, which means it is perfectly fine to share a client instance between multiple threads.
 
-=== Installation
+Installation
+------------
 
 You can install the latest DeathByCaptcha gem with:
 
@@ -20,41 +23,42 @@ You can add it to your Gemfile:
 
 	gem 'deathbycaptcha'
 
-=== Examples
+Examples
+--------
 
-==== Create a client
+### Create a client
 
-===== HTTP client
+#### HTTP client
 
 	require 'deathbycaptcha'
 
 	client = DeathByCaptcha.http_client('myusername', 'mypassword')
 	
-===== Socket client
+#### Socket client
 
 	require 'deathbycaptcha'
 
 	client = DeathByCaptcha.socket_client('myusername', 'mypassword')
 	
-==== Verbose mode (for debugging purposes)
+#### Verbose mode (for debugging purposes)
 
 	client.config.is_verbose = true
 	
-==== Decoding captcha
+#### Decoding captcha
 
-===== From URL
+##### From URL
 	
 	response = client.decode 'http://www.phpcaptcha.org/securimage/securimage_show.php'
 	
 	puts "captcha id: #{response['captcha']}, solution: #{response['text']}, is_correct: #{response['is_correct']}}"
 
-===== From file path
+##### From file path
 
 	response = client.decode 'path/to/my/captcha/file'
 
 	puts "captcha id: #{response['captcha']}, solution: #{response['text']}, is_correct: #{response['is_correct']}}"
 	
-===== From a file
+##### From a file
 
 	file = File.open('path/to/my/captcha/file', 'r')
 
@@ -62,7 +66,7 @@ You can add it to your Gemfile:
 
 	puts "captcha id: #{response['captcha']}, solution: #{response['text']}, is_correct: #{response['is_correct']}}"
 	
-===== From raw content
+##### From raw content
 
 	raw_content = File.open('path/to/my/captcha/file', 'r').read
 
@@ -70,19 +74,21 @@ You can add it to your Gemfile:
 
 	puts "captcha id: #{response['captcha']}, solution: #{response['text']}, is_correct: #{response['is_correct']}}"
 
-==== Get the solution of a captcha
+#### Get the solution of a captcha
 	
 	puts client.get_captcha('130920620')['text'] # where 130920620 is the captcha id
 	
-==== Get user account information
+#### Get user account information
 
 	puts client.get_user
 
-=== Maintainers
+Maintainers
+-----------
 
 * Rafael Barbolo Lopes (http://github.com/barbolo)
 * Rafael Ivan Garcia (http://github.com/rafaelivan)
 
-== License
+License
+-------
 
 MIT License. Copyright (C) 2011 by Infosimples. http://www.infosimples.com.br
