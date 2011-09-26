@@ -185,7 +185,7 @@ module DeathByCaptcha
       
       if file.nil?
         raise DeathByCaptcha::Errors::CaptchaEmpty
-      elsif config.max_captcha_file_size <= file.size
+      elsif config.max_captcha_file_size <= File.size?(file).to_i
         raise DeathByCaptcha::Errors::CaptchaOverflow
       end
       
