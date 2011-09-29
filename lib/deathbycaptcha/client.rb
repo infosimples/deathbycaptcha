@@ -171,7 +171,7 @@ module DeathByCaptcha
         # simply return the file
         file = captcha
         
-      elsif captcha.kind_of? String and captcha[0,7] == 'http://'
+      elsif captcha.kind_of? String and captcha.match(/^https?:\/\//)
         # Create a temporary file, download the file, write it to tempfile and return it
         tmp_file_path = File.join(Dir.tmpdir, "captcha_#{Time.now.to_i}_#{rand}")
         File.open(tmp_file_path, 'w') {|f| f.write RestClient.get(captcha)}
