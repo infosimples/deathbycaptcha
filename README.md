@@ -15,7 +15,7 @@ The API is thread-safe, which means it is perfectly fine to share a client insta
 Latest version
 --------------
 
-The latest version version of this API is 4.1.0.
+The latest version of this API is 4.1.0.
 
 Installation
 ------------
