@@ -11,7 +11,7 @@ module DeathByCaptcha
     
     attr_accessor :config
     
-    def initialize(username, password, extra={})
+    def initialize(username, password, extra = {})
       data = {
         :is_verbose => false, # If true, prints messages during execution
         :logger_output => STDOUT, # Logger output path or IO instance
@@ -23,11 +23,9 @@ module DeathByCaptcha
         :http_base_url => 'http://api.deathbycaptcha.com/api', # Base HTTP API url
         :http_response_type => 'application/json', # Preferred HTTP API server's response content type, do not change
         :socket_host => 'api.deathbycaptcha.com', # Socket API server's host
-        :socket_port => (8123..8130).map {|p| p}, # Socket API server's ports range
+        :socket_port => (8123..8130).map { |p| p }, # Socket API server's ports range
         :username => username, # DeathByCaptcha username
-        :password_hashed => Digest::SHA1.hexdigest(password), # DeathByCaptcha user's password encrypted
-        :password => '', # DeathByCaptcha user's password not encrypted
-        :password_is_hashed => true # True, if the password is hashed
+        :password => password, # DeathByCaptcha user's password not encrypted
       }.merge(extra)
       
       @config = DeathByCaptcha::Config.new(data) # Config instance
@@ -71,20 +69,13 @@ module DeathByCaptcha
     end
     
     #
-    # Remove an unsolved CAPTCHA
-    #
-    def remove(cid)
-      raise DeathByCaptcha::Errors::NotImplemented
-    end
-    
-    #
     # Upload a CAPTCHA
     #
     # Accepts file names, file objects or urls, and an optional flag telling
     # whether the CAPTCHA is case-sensitive or not.  Returns CAPTCHA details
     # on success.
     #
-    def upload(captcha, options={})
+    def upload(captcha, options = {})
       raise DeathByCaptcha::Errors::NotImplemented
     end
     
@@ -97,26 +88,29 @@ module DeathByCaptcha
     # timeout (in seconds).  Removes unsolved CAPTCHAs.  Returns CAPTCHA
     # details if (correctly) solved.
     #
-    def decode(captcha, options={})
-      options = {:timeout => config.default_timeout, :is_case_sensitive => false, :is_raw_content => false}.merge(options)
+    def decode(captcha, options = {})
+      options = {
+        :timeout => config.default_timeout,
+        :is_case_sensitive => false,
+        :is_raw_content => false
+      }.merge(options)
+      
       deadline = Time.now + options[:timeout]
       c = upload(captcha, options)
       if c
+        
         while deadline > Time.now and (c['text'].nil? or c['text'].empty?)
           sleep(config.polls_interval)
           c = get_captcha(c['captcha'])
         end
         
         if c['text']
-          if c['is_correct']
-            return c
-          end
+          return c if c['is_correct']
         else
           remove(c['captcha'])
         end
         
       end
-      
       
     end
     
@@ -129,11 +123,7 @@ module DeathByCaptcha
     # Return a hash with the user's credentials
     #
     def userpwd
-      if config.password_is_hashed
-        return {:username => config.username, :password => config.password_hashed, :is_hashed => '1'}
-      else
-        return {:username => config.username, :password => config.password}
-      end
+      { :username => config.username, :password => config.password }
     end
     
     #
@@ -144,7 +134,7 @@ module DeathByCaptcha
     #
     # Log a command and a message
     #
-    def log(cmd, msg='')
+    def log(cmd, msg = '')
       if @config.is_verbose
         @logger.info "#{cmd}: #{msg}"
       end
@@ -159,12 +149,14 @@ module DeathByCaptcha
     # => a url if it's a String and starts with 'http://'
     # => a filesystem path otherwise
     #
-    def load_file(captcha, is_raw_content=false)
+    def load_file(captcha, is_raw_content = false)
+      
       file = nil
+      
       if is_raw_content
         # Create a temporary file, write the raw content and return it
         tmp_file_path = File.join(Dir.tmpdir, "captcha_#{Time.now.to_i}_#{rand}")
-        File.open(tmp_file_path, 'wb') {|f| f.write captcha}
+        File.open(tmp_file_path, 'wb') { |f| f.write captcha }
         file = File.open(tmp_file_path, 'r')
         
       elsif captcha.kind_of? File
@@ -174,7 +166,7 @@ module DeathByCaptcha
       elsif captcha.kind_of? String and captcha.match(/^https?:\/\//)
         # Create a temporary file, download the file, write it to tempfile and return it
         tmp_file_path = File.join(Dir.tmpdir, "captcha_#{Time.now.to_i}_#{rand}")
-        File.open(tmp_file_path, 'w') {|f| f.write RestClient.get(captcha)}
+        File.open(tmp_file_path, 'w') { |f| f.write RestClient.get(captcha) }
         file = File.open(tmp_file_path, 'r')
         
       else
@@ -189,7 +181,8 @@ module DeathByCaptcha
         raise DeathByCaptcha::Errors::CaptchaOverflow
       end
       
-      return file
+      file
+      
     end
     
   end

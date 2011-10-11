@@ -25,22 +25,23 @@ module DeathByCaptcha
       not call("captcha/#{cid}/remove", userpwd)['captcha']
     end
     
-    def a(nome, test=false, valor="verdade")
-      puts nome,test,valor
-    end
-    
     #
     # Protected methods.
     #
     protected
     
-    def upload(captcha, options={})
-      options = {:is_case_sensitive => false, :is_raw_content => false}.merge(options)
+    def upload(captcha, options = {})
+      options = {
+        :is_case_sensitive => false,
+        :is_raw_content => false
+      }.merge(options)
+      
       data = userpwd
       data[:swid] = config.software_vendor_id
       data[:is_case_sensitive] = options[:is_case_sensitive] ? 1 : 0
       data[:captchafile] = load_file(captcha, options[:is_raw_content])
       response = call('captcha', data)
+      
       return response if response['captcha']
     end
     
@@ -49,7 +50,9 @@ module DeathByCaptcha
     #
     private
     
-    def call(cmd, payload={}, headers={})
+    def call(cmd, payload = {}, headers = {})
+      
+      headers = {} unless headers.is_a?(Hash)
       headers['Accept'] = config.http_response_type if headers['Accept'].nil?
       headers['User-Agent'] = config.api_version if headers['User-Agent'].nil?
       
@@ -74,6 +77,9 @@ module DeathByCaptcha
       rescue RestClient::RequestFailed => exc
         raise DeathByCaptcha::Errors::AccessDenied
         
+      rescue RestClient::ServiceUnavailable => exc
+        raise DeathByCaptcha::Errors::ServiceOverload
+      
       else
         raise DeathByCaptcha::Errors::CallError
         
@@ -85,8 +91,7 @@ module DeathByCaptcha
     
   end
   
-  
-  def self.http_client(username, password, extra={})
+  def self.http_client(username, password, extra = {})
     DeathByCaptcha::HTTPClient.new(username, password, extra)
   end
   

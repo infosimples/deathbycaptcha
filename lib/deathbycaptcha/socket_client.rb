@@ -25,7 +25,7 @@ module DeathByCaptcha
     end
     
     def get_user
-      call('user', userpwd)
+      call('user')
     end
     
     def get_captcha(cid)
@@ -33,19 +33,8 @@ module DeathByCaptcha
     end
 
     def report(cid)
-      call("captcha/#{cid}/report", userpwd)[:is_correct]
-      
-      data = userpwd
-      data['captcha'] = cid
-      not call('report', data)[:is_correct]
-    end
-    
-    def remove(cid)
-      not call("captcha/#{cid}/remove", userpwd)[:captcha]
-      
-      data = userpwd
-      data['captcha'] = cid
-      not call('remove', data)[:captcha]
+      data = { 'captcha' => cid }
+      call('report', data)[:is_correct]
     end
     
     #
@@ -53,14 +42,13 @@ module DeathByCaptcha
     #
     protected
     
-    def upload(captcha, is_case_sensitive=false, is_raw_content=false)
-      data = userpwd
-      data[:captcha] = Base64.encode64(load_file(captcha, is_raw_content).read)
+    def upload(captcha, is_case_sensitive = false, is_raw_content = false)
+      data = {
+        :captcha => Base64.encode64(load_file(captcha, is_raw_content).read),
+        :is_case_sensitive => (is_case_sensitive ? 1 : 0)
+      }
       
-      data[:is_case_sensitive] = is_case_sensitive ? 1 : 0
-      response = call('upload', data)
-      
-      response
+      call('upload', data)
     end
     
     #
@@ -178,13 +166,13 @@ module DeathByCaptcha
         end
       end
       
-      return buf[0, buf.size - 1] if buf.size > 0
+      return buf[0, buf.size] if buf.size > 0
       raise IOError.new('recv() timed out')
     end
     
     def call(cmd, data = {})
       data = {} if data.nil?
-      data.merge!({:cmd => cmd, :version => config.api_version})
+      data.merge!({ :cmd => cmd, :version => config.api_version })
       
       request = data.to_json
       log('SEND', request.to_s)
@@ -192,6 +180,10 @@ module DeathByCaptcha
       response = nil
       
       (0...1).each do
+        if not @socket and cmd != 'login'
+          call('login', userpwd)
+        end
+        
         # Locks other threads.
         # If another thread has already acquired the lock, this thread will be locked.
         @mutex.lock
@@ -240,7 +232,6 @@ module DeathByCaptcha
     end
     
   end
-  
   
   def self.socket_client(username, password, extra={})
     DeathByCaptcha::SocketClient.new(username, password, extra)

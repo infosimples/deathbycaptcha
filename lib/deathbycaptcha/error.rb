@@ -1,6 +1,6 @@
 module DeathByCaptcha
+  
   module Errors
-    
     
     #
     # Custom Error class for rescuing from DeathByCaptcha API errors
@@ -8,7 +8,7 @@ module DeathByCaptcha
     class Error < StandardError
 
       def initialize(message)
-        super "#{message} (DEATHBYCAPTCHA API ERROR)"
+        super("#{message} (DEATHBYCAPTCHA API ERROR)")
       end
 
     end
@@ -18,7 +18,7 @@ module DeathByCaptcha
     #
     class NotImplemented < Error
       def initialize
-        super 'The requested functionality was not implemented'
+        super('The requested functionality was not implemented')
       end
     end
     
@@ -27,7 +27,7 @@ module DeathByCaptcha
     #
     class CallError < Error
       def initialize
-        super 'HTTP call failed'
+        super('HTTP call failed')
       end
     end
     
@@ -36,7 +36,7 @@ module DeathByCaptcha
     #
     class AccessDenied < Error
       def initialize
-        super 'Access denied, please check your credentials and/or balance'
+        super('Access denied, please check your credentials and/or balance')
       end
     end
     
@@ -45,7 +45,7 @@ module DeathByCaptcha
     #
     class CaptchaEmpty
       def initialize
-        super 'CAPTCHA image is empty or could not be loaded'
+        super('CAPTCHA image is empty or could not be loaded')
       end
     end
     
@@ -54,9 +54,16 @@ module DeathByCaptcha
     #
     class CaptchaOverflow
       def initialize
-        super 'CAPTCHA image is too big'
+        super('CAPTCHA image is too big')
+      end
+    end
+    
+    class ServiceOverload
+      def initialize
+        super('CAPTCHA was rejected due to service overload, try again later')
       end
     end
     
   end
+  
 end
