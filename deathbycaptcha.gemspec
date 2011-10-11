@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Rafael Barbolo Lopes, Rafael Ivan Garcia"]
   s.email       = ["tech@infosimples.com.br"]
-  s.homepage    = "http://github.com/infosimples/deathbycaptcha"
+  s.homepage    = "http://www.infosimples.com.br/en/open-source/captcha-solving-api/"
   s.summary     = %q{Ruby API for DeathByCaptcha (Captcha Solver as a Service)}
   s.description = %q{Ruby API for DeathByCaptcha (Captcha Solver as a Service)}
 
