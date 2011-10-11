@@ -12,6 +12,11 @@ Thread-safety note
 
 The API is thread-safe, which means it is perfectly fine to share a client instance between multiple threads.
 
+Latest version
+--------------
+
+The latest version version of this API is 4.1.0.
+
 Installation
 ------------
 
