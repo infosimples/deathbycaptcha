@@ -61,7 +61,11 @@ module DeathByCaptcha
           random_port = @@socket_ports[rand(@@socket_ports.size)]
           # Creates a new Socket.
           addr = Socket.pack_sockaddr_in(random_port, @@socket_host)
-          @socket = Socket.new(:INET, :STREAM)
+          if RUBY_VERSION == '1.8.7'
+            @socket = Socket.new(AF_INET, SOCK_STREAM, 0)
+          else
+            @socket = Socket.new(:INET, :STREAM)
+          end
           @socket.connect_nonblock(addr)
         rescue Errno::EINPROGRESS
           log("INPROG", 'Waiting...')
