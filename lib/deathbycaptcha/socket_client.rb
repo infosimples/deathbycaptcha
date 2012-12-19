@@ -62,7 +62,7 @@ module DeathByCaptcha
           # Creates a new Socket.
           addr = Socket.pack_sockaddr_in(random_port, @@socket_host)
           if RUBY_VERSION == '1.8.7'
-            @socket = Socket.new(AF_INET, SOCK_STREAM, 0)
+            @socket = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM, 0)
           else
             @socket = Socket.new(:INET, :STREAM)
           end
