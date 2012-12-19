@@ -14,7 +14,7 @@ module DeathByCaptcha
     #
     # Socket API server's host & ports range.
     #
-    @@socket_host = 'api.deathbycaptcha.com'
+    @@socket_host = 'api.dbcapi.me'
     @@socket_ports = (8123...8131).to_a
     
     def initialize(username, password, extra = {})
@@ -36,59 +36,48 @@ module DeathByCaptcha
       data = { 'captcha' => cid }
       call('report', data)[:is_correct]
     end
-    
+
     #
     # Protected methods.
     #
     protected
-    
     def upload(captcha, is_case_sensitive = false, is_raw_content = false)
       data = {
         :captcha => Base64.encode64(load_file(captcha, is_raw_content).read),
         :is_case_sensitive => (is_case_sensitive ? 1 : 0)
       }
-      
       call('upload', data)
     end
-    
+
     #
     # Private methods.
     #
     private
-    
+
     def connect
       unless @socket
         log('CONN')
-        
         begin
           random_port = @@socket_ports[rand(@@socket_ports.size)]
-          
           # Creates a new Socket.
           addr = Socket.pack_sockaddr_in(random_port, @@socket_host)
-          
           @socket = Socket.new(:INET, :STREAM)
           @socket.connect_nonblock(addr)
+        rescue Errno::EINPROGRESS
+          log("INPROG", 'Waiting...')
         rescue Exception => e
-          if e.errno == 36 # EINPROGRESS
-            # Nothing.
-          else
-            close # Closes the socket.
-            log('CONN', 'Could not connect.')
-            log('CONN', e.backtrace.join('\n'))
-            
-            raise e
-          end
+          close # Closes the socket.
+          log('CONN', 'Could not connect.')
+          log('CONN', e.backtrace.join('\n'))
+          raise e
         end
-        
       end
-      
       @socket
     end
-    
+
     def close
       if @socket
         log('CLOSE')
-        
         begin
           @socket.close
         rescue Exception => e
@@ -99,15 +88,14 @@ module DeathByCaptcha
         end
       end
     end
-    
+
     def send(sock, buf)
       # buf += '\n'
       fds = [sock]
-      
       deadline = Time.now.to_f + 3 * config.polls_interval
       while deadline > Time.now.to_f and not buf.empty? do
         _, wr, ex = IO.select([], fds, fds, config.polls_interval)
-        
+
         if ex and ex.any?
           raise IOError.new('send(): select() excepted')
         elsif wr
@@ -125,28 +113,29 @@ module DeathByCaptcha
           end
         end
       end
-      
+
       unless buf.empty?
         raise IOError.new('send() timed out')
       else
         return self
       end
     end
-    
+
     def recv(sock)
       fds = [sock]
       buf = ''
-      
+
       deadline = Time.now.to_f() + 3 * config.polls_interval
       while deadline > Time.now.to_f do
         rd, _, ex = IO.select(fds, [], fds, config.polls_interval)
-        
         if ex and ex.any?
           raise IOError.new('send(): select() excepted')
         elsif rd
           while true do
             begin
               s = rd.first.recv_nonblock(256)
+            rescue Errno::EAGAIN
+              break
             rescue Exception => e
               if [35, 36].include? e.errno
                 break
@@ -161,15 +150,14 @@ module DeathByCaptcha
               end
             end
           end
-          
           break if buf.size > 0
         end
       end
-      
+
       return buf[0, buf.size] if buf.size > 0
       raise IOError.new('recv() timed out')
     end
-    
+
     def call(cmd, data = {})
       data = {} if data.nil?
       data.merge!({ :cmd => cmd, :version => config.api_version })
