@@ -5,47 +5,42 @@ require 'socket'
 require 'base64'
 
 module DeathByCaptcha
-  
+
   #
   # DeathByCaptcha Socket API client
   #
   class SocketClient < DeathByCaptcha::Client
-    
-    #
-    # Socket API server's host & ports range.
-    #
-    @@socket_host = 'api.dbcapi.me'
-    @@socket_ports = (8123...8131).to_a
-    
+
     def initialize(username, password, extra = {})
-      @mutex = Mutex.new
+      @mutex  = Mutex.new
       @socket = nil
-      
+
       super(username, password, extra)
     end
-    
+
     def get_user
       call('user')
     end
-    
+
     def get_captcha(cid)
-      call('captcha', {:captcha => cid})
+      call('captcha', { :captcha => cid })
     end
 
     def report(cid)
-      data = { 'captcha' => cid }
-      call('report', data)[:is_correct]
+      call('report', { :captcha => cid })[:is_correct]
     end
 
     #
     # Protected methods.
     #
     protected
+
     def upload(captcha, is_case_sensitive = false, is_raw_content = false)
       data = {
-        :captcha => Base64.encode64(load_file(captcha, is_raw_content).read),
-        :is_case_sensitive => (is_case_sensitive ? 1 : 0)
+        :captcha            => Base64.encode64(load_file(captcha, is_raw_content).read),
+        :is_case_sensitive  => (is_case_sensitive ? 1 : 0)
       }
+
       call('upload', data)
     end
 
@@ -58,21 +53,18 @@ module DeathByCaptcha
       unless @socket
         log('CONN')
         begin
-          random_port = @@socket_ports[rand(@@socket_ports.size)]
+          random_port = config.socket_ports[rand(config.socket_ports.size)]
           # Creates a new Socket.
-          addr = Socket.pack_sockaddr_in(random_port, @@socket_host)
-          if RUBY_VERSION == '1.8.7'
-            @socket = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM, 0)
-          else
-            @socket = Socket.new(:INET, :STREAM)
-          end
+          addr = Socket.pack_sockaddr_in(random_port, config.socket_host)
+
+          @socket = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM, 0)
           @socket.connect_nonblock(addr)
         rescue Errno::EINPROGRESS
           log("INPROG", 'Waiting...')
         rescue Exception => e
           close # Closes the socket.
           log('CONN', 'Could not connect.')
-          log('CONN', e.backtrace.join('\n'))
+          log('CONN', e.backtrace.join("\n"))
           raise e
         end
       end
@@ -86,7 +78,7 @@ module DeathByCaptcha
           @socket.close
         rescue Exception => e
           log('CLOSE', 'Could not close socket.')
-          log('CLOSE', e.backtrace.join('\n'))
+          log('CLOSE', e.backtrace.join("\n"))
         ensure
           @socket = nil
         end
@@ -108,7 +100,7 @@ module DeathByCaptcha
               sent = wr.first.send(buf, 0)
               buf = buf[sent, buf.size - sent]
             rescue Exception => e
-              if [35, 36].include? e.errno 
+              if [35, 36].include? e.errno
                 break
               else
                 raise e
@@ -165,29 +157,29 @@ module DeathByCaptcha
     def call(cmd, data = {})
       data = {} if data.nil?
       data.merge!({ :cmd => cmd, :version => config.api_version })
-      
+
       request = data.to_json
       log('SEND', request.to_s)
-      
+
       response = nil
-      
+
       (0...1).each do
         if not @socket and cmd != 'login'
           call('login', userpwd)
         end
-        
+
         # Locks other threads.
         # If another thread has already acquired the lock, this thread will be locked.
         @mutex.lock
-        
+
         begin
           sock = connect
           send(sock, request)
-          
+
           response = recv(sock)
         rescue Exception => e
           log('SEND', e.message)
-          log('SEND', e.backtrace.join('\n'))
+          log('SEND', e.backtrace.join("\n"))
           close
         else
           # If no exception raised.
@@ -195,24 +187,24 @@ module DeathByCaptcha
         ensure
           @mutex.unlock
         end
-        
+
       end
-      
+
       if response.nil?
         msg = 'Connection timed out during API request'
         log('SEND', msg)
-        
+
         raise Exception.new(msg)
       end
-      
+
       log('RECV', response.to_s)
-      
+
       begin
         response = JSON.load(response)
       rescue Exception => e
         raise Exception.new('Invalid API response')
       end
-      
+
       if 0x00 < response['status'] and 0x10 > response['status']
         raise DeathByCaptcha::Errors::AccessDenied
       elsif 0xff == response['status']
@@ -220,13 +212,13 @@ module DeathByCaptcha
       else
         return response
       end
-      
+
     end
-    
+
   end
-  
-  def self.socket_client(username, password, extra={})
+
+  def self.socket_client(username, password, extra = {})
     DeathByCaptcha::SocketClient.new(username, password, extra)
   end
-  
+
 end

@@ -1,4 +1,4 @@
-module DeathByCaptcha    
+module DeathByCaptcha
 
   #
   # Config class
@@ -6,7 +6,7 @@ module DeathByCaptcha
   #
   class Config
 
-    def initialize(data={})
+    def initialize(data = {})
       @data = {}
       update!(data)
     end
@@ -38,5 +38,5 @@ module DeathByCaptcha
     end
 
   end
-  
+
 end
