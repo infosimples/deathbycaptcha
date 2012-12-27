@@ -12,11 +12,6 @@ Thread-safety note
 
 The API is thread-safe, which means it is perfectly fine to share a client instance between multiple threads.
 
-Latest version
---------------
-
-The latest version of this API is 4.1.1.
-
 Installation
 ------------
 
@@ -38,23 +33,23 @@ Examples
 	require 'deathbycaptcha'
 
 	client = DeathByCaptcha.http_client('myusername', 'mypassword')
-	
+
 #### Socket client
 
 	require 'deathbycaptcha'
 
 	client = DeathByCaptcha.socket_client('myusername', 'mypassword')
-	
+
 #### Verbose mode (for debugging purposes)
 
 	client.config.is_verbose = true
-	
+
 #### Decoding captcha
 
 ##### From URL
-	
+
 	response = client.decode 'http://www.phpcaptcha.org/securimage/securimage_show.php'
-	
+
 	puts "captcha id: #{response['captcha']}, solution: #{response['text']}, is_correct: #{response['is_correct']}}"
 
 ##### From file path
@@ -62,7 +57,7 @@ Examples
 	response = client.decode 'path/to/my/captcha/file'
 
 	puts "captcha id: #{response['captcha']}, solution: #{response['text']}, is_correct: #{response['is_correct']}}"
-	
+
 ##### From a file
 
 	file = File.open('path/to/my/captcha/file', 'r')
@@ -70,7 +65,7 @@ Examples
 	response = client.decode file
 
 	puts "captcha id: #{response['captcha']}, solution: #{response['text']}, is_correct: #{response['is_correct']}}"
-	
+
 ##### From raw content
 
 	raw_content = File.open('path/to/my/captcha/file', 'r').read
@@ -80,9 +75,9 @@ Examples
 	puts "captcha id: #{response['captcha']}, solution: #{response['text']}, is_correct: #{response['is_correct']}}"
 
 #### Get the solution of a captcha
-	
+
 	puts client.get_captcha('130920620')['text'] # where 130920620 is the captcha id
-	
+
 #### Get user account information
 
 	puts client.get_user
