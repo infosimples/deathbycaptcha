@@ -39,7 +39,7 @@ module DeathByCaptcha
       data                      = userpwd
       data[:swid]               = config.software_vendor_id
       data[:is_case_sensitive]  = (options[:is_case_sensitive] ? 1 : 0)
-      data[:captchafile]        = load_file(captcha, options[:is_raw_content])
+      data[:captchafile]        = load_file(captcha, options[:is_raw_content], options[:headers])
       response                  = call('captcha', data)
 
       return response if response['captcha']

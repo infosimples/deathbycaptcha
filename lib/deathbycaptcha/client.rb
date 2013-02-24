@@ -147,7 +147,7 @@ module DeathByCaptcha
     # => a url if it's a String and starts with 'http://'
     # => a filesystem path otherwise
     #
-    def load_file(captcha, is_raw_content = false)
+    def load_file(captcha, is_raw_content = false, headers = {})
 
       file = nil
 
@@ -164,7 +164,7 @@ module DeathByCaptcha
       elsif captcha.kind_of? String and captcha.match(/^https?:\/\//i)
         # Create a temporary file, download the file, write it to tempfile and return it
         tmp_file_path = File.join(Dir.tmpdir, "captcha_#{Time.now.to_i}_#{rand}")
-        File.open(tmp_file_path, 'wb') { |f| f.write RestClient.get(captcha) }
+        File.open(tmp_file_path, 'wb') { |f| f.write RestClient.get(captcha, headers) }
         file = File.open(tmp_file_path, 'r')
 
       else
