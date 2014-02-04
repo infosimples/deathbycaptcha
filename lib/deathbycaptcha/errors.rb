@@ -43,7 +43,7 @@ module DeathByCaptcha
     #
     # Raised when the captcha file could not be loaded or is empty.
     #
-    class CaptchaEmpty
+    class CaptchaEmpty < Error
       def initialize
         super('CAPTCHA image is empty or could not be loaded')
       end
@@ -52,13 +52,13 @@ module DeathByCaptcha
     #
     # Raised when the size of the captcha file is too big.
     #
-    class CaptchaOverflow
+    class CaptchaOverflow < Error
       def initialize
         super('CAPTCHA image is too big')
       end
     end
 
-    class ServiceOverload
+    class ServiceOverload < Error
       def initialize
         super('CAPTCHA was rejected due to service overload, try again later')
       end
