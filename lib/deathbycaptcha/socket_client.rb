@@ -194,7 +194,7 @@ module DeathByCaptcha
         msg = 'Connection timed out during API request'
         log('SEND', msg)
 
-        raise Exception.new(msg)
+        raise DeathByCaptcha::Errors::Timeout.new(msg)
       end
 
       log('RECV', response.to_s)
@@ -202,13 +202,13 @@ module DeathByCaptcha
       begin
         response = JSON.load(response)
       rescue Exception => e
-        raise Exception.new('Invalid API response')
+        raise DeathByCaptcha::Errors::InvalidApiResponse
       end
 
       if 0x00 < response['status'] and 0x10 > response['status']
         raise DeathByCaptcha::Errors::AccessDenied
       elsif 0xff == response['status']
-        raise Exception.new('API server error occured')
+        raise DeathByCaptcha::Errors::ApiServerError
       else
         return response
       end
