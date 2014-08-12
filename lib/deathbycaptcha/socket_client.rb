@@ -194,7 +194,7 @@ module DeathByCaptcha
         msg = 'Connection timed out during API request'
         log('SEND', msg)
 
-        raise DeathByCaptcha::Errors::Timeout, msg
+        raise DeathByCaptcha::Errors::Timeout.new(msg)
       end
 
       log('RECV', response.to_s)
