@@ -64,6 +64,30 @@ module DeathByCaptcha
       end
     end
 
+    #
+    # Raised when the connection times out.
+    #
+    class Timeout < Error
+    end
+
+    #
+    # Raised when there's an invalid API response.
+    #
+    class InvalidApiResponse < Error
+      def initialize
+        super('Invalid API response')
+      end
+    end
+
+    #
+    # Raised when an API server error occurred
+    #
+    class ApiServerError < Error
+      def initialize
+        super('API server error occured')
+      end
+    end
+
   end
 
 end
