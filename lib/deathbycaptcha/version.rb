@@ -1,3 +1,4 @@
 module Deathbycaptcha
-  VERSION = "0.0.1"
+  VERSION = "5.0.0"
+  API_VERSION = "DBC/Ruby v#{VERSION}"
 end
