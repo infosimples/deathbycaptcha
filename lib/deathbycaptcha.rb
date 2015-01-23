@@ -1,9 +1,5 @@
-require 'deathbycaptcha/version'
-require 'deathbycaptcha/config'
-require 'deathbycaptcha/errors'
-require 'deathbycaptcha/client'
-require 'deathbycaptcha/http_client'
-require 'deathbycaptcha/socket_client'
+require "deathbycaptcha/version"
 
-module DeathByCaptcha
+module Deathbycaptcha
+  # Your code goes here...
 end

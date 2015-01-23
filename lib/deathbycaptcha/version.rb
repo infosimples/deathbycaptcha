@@ -1,4 +1,3 @@
-module DeathByCaptcha
-  VERSION = "4.1.5"
-  API_VERSION = "DBC/Ruby v4.1.2"
+module Deathbycaptcha
+  VERSION = "0.0.1"
 end

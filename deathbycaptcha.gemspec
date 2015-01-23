@@ -1,24 +1,23 @@
-# -*- encoding: utf-8 -*-
-$:.push File.expand_path("../lib", __FILE__)
-require "deathbycaptcha/version"
+# coding: utf-8
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'deathbycaptcha/version'
 
-Gem::Specification.new do |s|
-  s.add_dependency 'rest-client', '~> 1.6.1'
-  s.add_dependency 'json', '>= 1.4.6'
-  
-  s.name        = "deathbycaptcha"
-  s.version     = DeathByCaptcha::VERSION
-  s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Rafael Barbolo Lopes, Rafael Ivan Garcia"]
-  s.email       = ["tech@infosimples.com.br"]
-  s.homepage    = "http://www.infosimples.com.br/en/open-source/captcha-solving-api/"
-  s.summary     = %q{Ruby API for DeathByCaptcha (Captcha Solver as a Service)}
-  s.description = %q{Ruby API for DeathByCaptcha (Captcha Solver as a Service)}
+Gem::Specification.new do |spec|
+  spec.name          = "deathbycaptcha"
+  spec.version       = Deathbycaptcha::VERSION
+  spec.authors       = ["Rafael Barbolo"]
+  spec.email         = ["rafael.barbolo@infosimples.com.br"]
+  spec.summary       = %q{TODO: Write a short summary. Required.}
+  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.homepage      = ""
+  spec.license       = "MIT"
 
-  s.rubyforge_project = "deathbycaptcha"
+  spec.files         = `git ls-files -z`.split("\x0")
+  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
+  spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
+  spec.require_paths = ["lib"]
 
-  s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  s.require_paths = ["lib"]
+  spec.add_development_dependency "bundler", "~> 1.7"
+  spec.add_development_dependency "rake", "~> 10.0"
 end
