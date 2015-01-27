@@ -82,21 +82,22 @@ module DeathByCaptcha
     # @return [DeathByCaptcha::Captcha] The captcha (with solution if an error is not raised).
     #
     def decode!(options = {})
-      deadline = Time.now + self.timeout
+      ::Timeout.timeout(self.timeout) do
+        raw64 = load_captcha(options)
+        raise DeathByCaptcha::InvalidCaptcha if raw64.to_s.empty?
 
-      raw64 = load_captcha(options)
-      raise DeathByCaptcha::InvalidCaptcha if raw64.to_s.empty?
+        _captcha = self.upload(raw64)
+        while _captcha.text.to_s.empty?
+          sleep(self.polling)
+          _captcha = self.captcha(_captcha.id)
+        end
 
-      _captcha = self.upload(raw64)
-      while _captcha.text.to_s.empty? && deadline > Time.now
-        sleep(self.polling)
-        _captcha = self.captcha(_captcha.id)
+        raise DeathByCaptcha::IncorrectSolution if !_captcha.is_correct
+
+        _captcha
       end
-
-      raise DeathByCaptcha::IncorrectSolution if !_captcha.is_correct
-      raise DeathByCaptcha::Timeout if _captcha.text.to_s.empty?
-
-      _captcha
+    rescue ::Timeout::Error
+      raise DeathByCaptcha::Timeout
     end
 
     # Retrieve information from an uploaded captcha.

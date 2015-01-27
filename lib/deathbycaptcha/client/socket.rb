@@ -76,10 +76,10 @@ module DeathByCaptcha
         password: self.password
       )
 
-      response = ::Socket.tcp(HOST, PORTS.sample) do |socket|
-        socket.puts payload.to_json
-        socket.read
-      end
+      socket = create_socket()
+      socket.puts(payload.to_json)
+      response = socket.read()
+      socket.close()
 
       begin
         response = JSON.parse(response)
@@ -101,6 +101,28 @@ module DeathByCaptcha
       end
 
       response
+    end
+
+    # Create a new socket connection with DeathByCaptcha API.
+    # This method is necessary because Ruby 1.9.7 doesn't support connection
+    # timeout and only Ruby 2.2.0 fixes a bug with unsafe sockets threads.
+    #
+    # In Ruby >= 2.2.0, this could be implemented as simply as:
+    # ::Socket.tcp(HOST, PORTS.sample, connect_timeout: 0)
+    #
+    def create_socket
+      socket = ::Socket.new(::Socket::AF_INET, ::Socket::SOCK_STREAM, 0)
+      sockaddr = ::Socket.sockaddr_in(PORTS.sample, HOST)
+      begin # emulate blocking connect
+        socket.connect_nonblock(sockaddr)
+      rescue IO::WaitWritable
+        IO.select(nil, [socket]) # wait 3-way handshake completion
+        begin
+          socket.connect_nonblock(sockaddr) # check connection failure
+        rescue Errno::EISCONN
+        end
+      end
+      socket
     end
 
     # Return a cached http client for methods that doesn't work with sockets.
