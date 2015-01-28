@@ -32,7 +32,7 @@ Or install it yourself as:
   ```ruby
   # Create a client (:socket and :http clients are available)
   #
-  client = DeathByCaptcha.new('myusername', 'mypassword', :socket)
+  client = DeathByCaptcha.new('myusername', 'mypassword', :http)
   ```
 
 2. **Solve a captcha**
@@ -113,6 +113,10 @@ clients have the same methods/interface.
 When using the socket client, make sure that outgoing TCP traffic to
 **api.dbcapi.me** to the ports in range **8123-8130** is not blocked by your
 firewall.
+
+> We are currently suggesting developers to use HTTP connection because Socket
+> seems to be unstable with older Ruby versions. While we are investigating,
+> consider using only HTTP connection.
 
 #### Ruby dependencies
 

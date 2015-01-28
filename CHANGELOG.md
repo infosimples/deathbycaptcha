@@ -1,7 +1,14 @@
 ### Comming next
 
-* Review Socket client, check if it's worth keeping a pool of open connections
-* Add more tests
+* Add Travis CI
+* Add Code Climate
+* Add Hakiri
+* Add Hound
+* Add Rubocop
+
+### 5.0.1 - 2015-01-27
+
+* Fix socket unsafe threads with Ruby < 2.2.0
 
 ### 5.0.0 - 2015-01-26
 
