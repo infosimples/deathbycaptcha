@@ -24,45 +24,71 @@ Or install it yourself as:
 
     $ gem install deathbycaptcha
 
-
 ## Usage
 
 1. **Create a client**
 
   ```ruby
   # Create a client (:socket and :http clients are available)
-  #
   client = DeathByCaptcha.new('myusername', 'mypassword', :http)
   ```
 
 2. **Solve a captcha**
+  2.1. **Commom captcha**
 
-  There are two methods available: **decode** and **decode!**
-    * **decode** doesn't raise exceptions.
-    * **decode!** may raise a *DeathByCaptcha::Error* if something goes wrong.
+    There are two methods available: **decode** and **decode!**
+      * **decode** doesn't raise exceptions.
+      * **decode!** may raise a *DeathByCaptcha::Error* if something goes wrong.
 
-  If the solution is not available, an empty captcha object will be returned.
+    If the solution is not available, an empty captcha object will be returned.
 
-  ```ruby
-  captcha = client.decode(url: 'http://bit.ly/1xXZcKo')
-  captcha.text        # Solution of the captcha
-  captcha.id          # Numeric ID of the captcha solved by DeathByCaptcha
-  captcha.is_correct  # true if the solution is correct
-  ```
+    ```ruby
+    captcha = client.decode(url: 'http://bit.ly/1xXZcKo')
+    captcha.text        # Solution of the captcha
+    captcha.id          # Numeric ID of the captcha solved by DeathByCaptcha
+    captcha.is_correct  # true if the solution is correct
+    ```
 
-  You can also specify *path*, *file*, *raw* and *raw64* when decoding an image.
+    You can also specify *path*, *file*, *raw* and *raw64* when decoding an image.
 
-  ```ruby
-  client.decode(path: 'path/to/my/captcha/file')
+    ```ruby
+    client.decode(path: 'path/to/my/captcha/file')
 
-  client.decode(file: File.open('path/to/my/captcha/file', 'rb'))
+    client.decode(file: File.open('path/to/my/captcha/file', 'rb'))
 
-  client.decode(raw: File.open('path/to/my/captcha/file', 'rb').read)
+    client.decode(raw: File.open('path/to/my/captcha/file', 'rb').read)
 
-  client.decode(raw64: Base64.encode64(File.open('path/to/my/captcha/file', 'rb').read))
-  ```
+    client.decode(raw64: Base64.encode64(File.open('path/to/my/captcha/file', 'rb').read))
+    ```
+  2.2. **New Recaptcha**
 
-  > Internally, the gem will always convert the image to raw64 (binary base64 encoded).
+    DeathByCaptcha now supports new recaptcha. For these captchas, there are two
+    ways of solving captcha:
+
+    2.2.1. **Coordinates**
+
+      ```ruby
+      captcha = client.decode(url: 'http://bit.ly/1xXZcKo', type: 2)
+      ```
+      This will return a array of duples that represent image's coordinates X
+      and Y that were clicked.
+
+    2.2.2. **Position**
+
+      This method requires more arguments.
+
+      ```ruby
+      args = {}
+      args[:url]         = 'http://bit.ly/1xXZcKo'
+      args[:banner]      = { url: 'http://bit.ly/1xXZcKo' }
+      args[:banner_text] = 'Recaptcha text'
+      args[:type]        = 3
+      captcha = client.decode!(args)
+      ```
+
+      This will return a string with the array of clicked positions.
+
+  > Internally, the gem will always convert the images to raw64 (binary base64 encoded).
 
 3. **Retrieve a previously solved captcha**
 
@@ -156,6 +182,7 @@ This gem has been tested on the following versions of Ruby:
 # Maintainers
 
 * [Débora Setton Fernandes](http://github.com/deborasetton)
+* [Marcelo Mita](http://github.com/marcelomita)
 * [Rafael Barbolo](http://github.com/barbolo)
 * [Rafael Ivan Garcia](http://github.com/rafaelivan)
 

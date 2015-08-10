@@ -87,16 +87,22 @@ module DeathByCaptcha
       raw64 = load_captcha(options)
       raise DeathByCaptcha::InvalidCaptcha if raw64.to_s.empty?
 
-      _captcha = self.upload(raw64)
-      while _captcha.text.to_s.empty?
+      unless options[:banner].nil?
+        options[:banner64] = load_captcha(options[:banner])
+        raise DeathByCaptcha::InvalidCaptcha if options[:banner64].to_s.empty?
+      end
+
+      decoded_captcha = self.upload(raw64, options)
+
+      while decoded_captcha.text.to_s.empty?
         sleep(self.polling)
-        _captcha = self.captcha(_captcha.id)
+        decoded_captcha = self.captcha(decoded_captcha.id)
         raise DeathByCaptcha::Timeout if (Time.now - started_at) > self.timeout
       end
 
-      raise DeathByCaptcha::IncorrectSolution if !_captcha.is_correct
+      raise DeathByCaptcha::IncorrectSolution if !decoded_captcha.is_correct
 
-      _captcha
+      decoded_captcha
     end
 
     # Retrieve information from an uploaded captcha.

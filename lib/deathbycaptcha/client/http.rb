@@ -53,8 +53,14 @@ module DeathByCaptcha
     #
     # @return [DeathByCaptcha::Captcha] The captcha object (not solved yet).
     #
-    def upload(raw64)
-      response = perform('captcha', :post_multipart, captchafile: "base64:#{raw64}")
+    def upload(raw64, options = {})
+      payload = {}
+      payload[:captchafile] = "base64:#{raw64}"
+      payload[:type] = options[:type] unless options[:type].nil?
+      payload[:banner] = "base64:#{options[:banner64]}" unless options[:banner64].nil?
+      payload[:banner_text] = options[:banner_text] unless options[:banner_text].nil?
+
+      response = perform('captcha', :post_multipart, payload)
       DeathByCaptcha::Captcha.new(response)
     end
 
@@ -84,7 +90,6 @@ module DeathByCaptcha
         boundary, body = prepare_multipart_data(payload)
         req.content_type = "multipart/form-data; boundary=#{boundary}"
         req.body = body
-
       else
         uri = URI("#{BASE_URL}/#{action}?#{URI.encode_www_form(payload)}")
         req = Net::HTTP::Get.new(uri.request_uri, headers)
