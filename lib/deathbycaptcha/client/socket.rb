@@ -54,8 +54,8 @@ module DeathByCaptcha
     #
     # @return [DeathByCaptcha::Captcha] The captcha object (not solved yet).
     #
-    def upload(raw64, options = {})
-      response = perform('upload', raw64)
+    def upload(raw64)
+      response = perform('upload', captcha: raw64)
       DeathByCaptcha::Captcha.new(response)
     end
 
