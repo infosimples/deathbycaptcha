@@ -34,61 +34,34 @@ Or install it yourself as:
   ```
 
 2. **Solve a captcha**
-  2.1. **Commom captcha**
 
-    There are two methods available: **decode** and **decode!**
-      * **decode** doesn't raise exceptions.
-      * **decode!** may raise a *DeathByCaptcha::Error* if something goes wrong.
+  There are two methods available: **decode** and **decode!**
+    * **decode** doesn't raise exceptions.
+    * **decode!** may raise a *DeathByCaptcha::Error* if something goes wrong.
 
-    If the solution is not available, an empty captcha object will be returned.
+  If the solution is not available, an empty captcha object will be returned.
 
-    ```ruby
-    captcha = client.decode(url: 'http://bit.ly/1xXZcKo')
-    captcha.text        # Solution of the captcha
-    captcha.id          # Numeric ID of the captcha solved by DeathByCaptcha
-    captcha.is_correct  # true if the solution is correct
-    ```
+  ```ruby
+  captcha = client.decode!(url: 'http://bit.ly/1xXZcKo')
+  captcha.text        # Solution of the captcha
+  captcha.id          # Numeric ID of the captcha solved by DeathByCaptcha
+  captcha.is_correct  # true if the solution is correct
+  ```
 
-    You can also specify *path*, *file*, *raw* and *raw64* when decoding an image.
+  You can also specify *path*, *file*, *raw* and *raw64* when decoding an image.
 
-    ```ruby
-    client.decode(path: 'path/to/my/captcha/file')
+  ```ruby
+  client.decode!(path: 'path/to/my/captcha/file')
 
-    client.decode(file: File.open('path/to/my/captcha/file', 'rb'))
+  client.decode!(file: File.open('path/to/my/captcha/file', 'rb'))
 
-    client.decode(raw: File.open('path/to/my/captcha/file', 'rb').read)
+  client.decode!(raw: File.open('path/to/my/captcha/file', 'rb').read)
 
-    client.decode(raw64: Base64.encode64(File.open('path/to/my/captcha/file', 'rb').read))
-    ```
-  2.2. **New Recaptcha**
+  client.decode!(raw64: Base64.encode64(File.open('path/to/my/captcha/file', 'rb').read))
+  ```
 
-    DeathByCaptcha now supports new recaptcha. For these captchas, there are two
-    ways of solving captcha:
-
-    2.2.1. **Coordinates**
-
-      ```ruby
-      captcha = client.decode(url: 'http://bit.ly/1xXZcKo', type: 2)
-      ```
-      This will return a array of duples that represent image's coordinates X
-      and Y that were clicked.
-
-    2.2.2. **Position**
-
-      This method requires more arguments.
-
-      ```ruby
-      args = {}
-      args[:url]         = 'http://bit.ly/1xXZcKo'
-      args[:banner]      = { url: 'http://bit.ly/1xXZcKo' }
-      args[:banner_text] = 'Recaptcha text'
-      args[:type]        = 3
-      captcha = client.decode!(args)
-      ```
-
-      This will return a string with the array of clicked positions.
-
-  > Internally, the gem will always convert the images to raw64 (binary base64 encoded).
+  > Internally, the gem will always convert any image to raw64 (binary base64
+  encoded).
 
 3. **Retrieve a previously solved captcha**
 
@@ -123,6 +96,84 @@ Or install it yourself as:
   status.is_service_overloaded  # true if DeathByCaptcha is overloaded/unresponsive
   ```
 
+## New reCAPTCHA
+
+To solve captchas similar to
+[reCAPTCHA v2](https://support.google.com/recaptcha/?hl=en#6262736), you can use
+both the DeathByCaptcha's **Coordinates API** or **Image Group API**.
+
+Please, read the oficial documentation at
+http://www.deathbycaptcha.com/user/api/newrecaptcha.
+
+### Using the Coordinates API
+
+```ruby
+# Read above all the instructions on how to solve a captcha.
+captcha = client.decode!(type: 2, url: 'http://bit.ly/1xXZcKo')
+```
+
+You should specify arguments with *type = 2* and an image similar to a screenshot of
+the captcha. See an example:
+
+**Captcha (screenshot)**
+
+> the argument is passed as *url*, *path*, *file*, *raw* or *raw64*
+
+![Example of a captcha based on image clicks](captchas/2.jpg)
+
+The response will be an array containing coordinates (x, y) where the human
+clicked to solve the captcha. For the captcha above it should look something
+like:
+
+```ruby
+# captcha.text
+"[[30,143],[241,325]]"
+
+# captcha.coordinates
+[[30, 143], [241, 325]]
+```
+
+### Using the Image Group API
+
+```ruby
+# Read above all the instructions on how to solve a captcha.
+captcha = client.decode!(
+  type: 3,
+  url: 'http://bit.ly/1xXZcKo', # image of the grid which should be clicked
+  banner: { url: '' }, # the image that appears along with the banner text
+  banner_text: 'Click all images with bananas' # the banner text
+)
+```
+
+You should specify arguments with *type = 3* and the decomposed captcha as seen in the
+example below:
+
+**Captcha: images grid**
+
+> the argument is passed as *url*, *path*, *file*, *raw* or *raw64*
+
+![Example of a grid of a captcha based on image clicks](captchas/3-grid.jpg)
+
+**Captcha: banner**
+
+![Example of a banner of a captcha based on image clicks](captchas/3-banner.jpg)
+
+**Captcha: banner text**
+
+> Click all images with bananas
+
+The response will be an array containing the indexes for each image that should
+be clicked counting from left to right. For the captcha above it should look
+something like:
+
+```ruby
+# captcha.text
+"[1,9]"
+
+# captcha.indexes
+[1, 9]
+```
+
 ## Notes
 
 #### Thread-safety
@@ -147,7 +198,7 @@ firewall.
 #### Ruby dependencies
 
 DeathByCaptcha >= 5.0.0 don't require specific dependencies. That saves you
-memmory and avoid conflicts with other gems.
+memory and avoid conflicts with other gems.
 
 #### Input image format
 
@@ -157,7 +208,7 @@ you already have this format available on your side, there's no need to do
 convertions before calling the API.
 
 > Our recomendation is to never convert your image format, unless needed. Let
-> the gem convert internally. It may save you resources (CPU, memmory and IO).
+> the gem convert internally. It may save you resources (CPU, memory and IO).
 
 #### Versioning
 
