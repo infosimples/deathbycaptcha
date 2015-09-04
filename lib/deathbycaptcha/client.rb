@@ -87,12 +87,7 @@ module DeathByCaptcha
       raw64 = load_captcha(options)
       raise DeathByCaptcha::InvalidCaptcha if raw64.to_s.empty?
 
-      unless options[:banner].nil?
-        options[:banner64] = load_captcha(options[:banner])
-        raise DeathByCaptcha::InvalidCaptcha if options[:banner64].to_s.empty?
-      end
-
-      decoded_captcha = self.upload(raw64, options)
+      decoded_captcha = self.upload(options.merge(raw64: raw64))
 
       while decoded_captcha.text.to_s.empty?
         sleep(self.polling)

@@ -54,8 +54,12 @@ module DeathByCaptcha
     #
     # @return [DeathByCaptcha::Captcha] The captcha object (not solved yet).
     #
-    def upload(raw64, options = {})
-      response = perform('upload', options.merge(captcha: raw64))
+    def upload(options = {})
+      if options[:type] && options[:type].to_i != 1
+        # Socket client implementation currently supports only text captchas.
+        raise DeathByCaptcha::InvalidCaptcha
+      end
+      response = perform('upload', captcha: options[:raw64])
       DeathByCaptcha::Captcha.new(response)
     end
 

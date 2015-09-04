@@ -53,12 +53,18 @@ module DeathByCaptcha
     #
     # @return [DeathByCaptcha::Captcha] The captcha object (not solved yet).
     #
-    def upload(raw64, options = {})
+    def upload(options = {})
       payload = {}
-      payload[:captchafile] = "base64:#{raw64}"
-      payload[:type] = options[:type] unless options[:type].nil?
-      payload[:banner] = "base64:#{options[:banner64]}" unless options[:banner64].nil?
-      payload[:banner_text] = options[:banner_text] unless options[:banner_text].nil?
+      payload[:captchafile] = "base64:#{options[:raw64]}"
+      payload[:type] = options[:type] if options[:type].to_i > 0
+
+      if options[:type].to_i == 3
+        banner64 = load_captcha(options[:banner])
+        raise DeathByCaptcha::InvalidCaptcha if banner64.to_s.empty?
+
+        payload[:banner] = "base64:#{banner64}"
+        payload[:banner_text] = options[:banner_text].to_s
+      end
 
       response = perform('captcha', :post_multipart, payload)
       DeathByCaptcha::Captcha.new(response)
