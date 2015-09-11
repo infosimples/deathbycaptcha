@@ -2,6 +2,13 @@ Developed by [Infosimples](https://infosimples.com), a brazilian company that
 offers [data extraction solutions](https://infosimples.com/en/data-engineering)
 and [Ruby on Rails development](https://infosimples.com/en/software-development).
 
+We suggest you to also check [2Captcha.com](http://2captcha.com/?from=1025109)
+for a cheaper service. You can find it's gem fully compatible with the
+deathbycaptcha gem at https://github.com/infosimples/two_captcha.
+
+[Contact us](https://infosimples.com/en) if you need enterprise services for
+CAPTCHAs solving or Internet automation.
+
 
 # DeathByCaptcha
 
