@@ -1,4 +1,5 @@
 require 'base64'
+require 'openssl'
 require 'json'
 require 'bigdecimal'
 require 'socket'
