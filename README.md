@@ -1,6 +1,5 @@
 Developed by [Infosimples](https://infosimples.com), a brazilian company that
-offers [data extraction solutions](https://infosimples.com/en/data-engineering)
-and [Ruby on Rails development](https://infosimples.com/en/software-development).
+offers [data extraction solutions](https://infosimples.com/en/data-engineering).
 
 We suggest you to also check [2Captcha.com](http://2captcha.com/?from=1025109)
 for a cheaper service. You can find it's gem fully compatible with the
