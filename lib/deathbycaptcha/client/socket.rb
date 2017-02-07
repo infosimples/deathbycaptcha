@@ -4,7 +4,6 @@ module DeathByCaptcha
   #
   class Client::Socket < Client
 
-    HOST  = 'api.dbcapi.me'
     PORTS = (8123..8130).to_a
 
     # Retrieve information from an uploaded captcha.
@@ -116,7 +115,7 @@ module DeathByCaptcha
     #
     def create_socket
       socket = ::Socket.new(::Socket::AF_INET, ::Socket::SOCK_STREAM, 0)
-      sockaddr = ::Socket.sockaddr_in(PORTS.sample, HOST)
+      sockaddr = ::Socket.sockaddr_in(PORTS.sample, self.hostname)
       begin # emulate blocking connect
         socket.connect_nonblock(sockaddr)
       rescue IO::WaitWritable

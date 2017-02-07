@@ -12,7 +12,7 @@ module DeathByCaptcha
   #
   class Client
 
-    attr_accessor :username, :password, :timeout, :polling
+    attr_accessor :username, :password, :timeout, :polling, :hostname
 
     # Create a DeathByCaptcha API client
     #
@@ -51,6 +51,7 @@ module DeathByCaptcha
       self.password   = password
       self.timeout    = options[:timeout] || 60
       self.polling    = options[:polling] || 5
+      self.hostname   = ENV.fetch('DBC_HOSTNAME', 'api.dbcapi.me')
     end
 
     # Decode the text from an image (i.e. solve a captcha).

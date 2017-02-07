@@ -3,9 +3,6 @@ module DeathByCaptcha
   # HTTP client for DeathByCaptcha API.
   #
   class Client::HTTP < Client
-
-    BASE_URL = 'http://api.dbcapi.me/api'
-
     # Retrieve information from an uploaded captcha.
     #
     # @param [Integer] captcha_id Numeric ID of the captcha.
@@ -86,18 +83,18 @@ module DeathByCaptcha
       headers = { 'User-Agent' => DeathByCaptcha::API_VERSION }
 
       if method == :post
-        uri = URI("#{BASE_URL}/#{action}")
+        uri = URI("http://#{self.hostname}/api/#{action}")
         req = Net::HTTP::Post.new(uri.request_uri, headers)
         req.set_form_data(payload)
 
       elsif method == :post_multipart
-        uri = URI("#{BASE_URL}/#{action}")
+        uri = URI("http://#{self.hostname}/api/#{action}")
         req = Net::HTTP::Post.new(uri.request_uri, headers)
         boundary, body = prepare_multipart_data(payload)
         req.content_type = "multipart/form-data; boundary=#{boundary}"
         req.body = body
       else
-        uri = URI("#{BASE_URL}/#{action}?#{URI.encode_www_form(payload)}")
+        uri = URI("http://#{self.hostname}/api/#{action}?#{URI.encode_www_form(payload)}")
         req = Net::HTTP::Get.new(uri.request_uri, headers)
       end
 
