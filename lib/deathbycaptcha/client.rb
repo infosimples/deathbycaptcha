@@ -43,6 +43,7 @@ module DeathByCaptcha
     # @param [Hash]   options  Options hash.
     # @option options [Integer] :timeout (60) Seconds before giving up.
     # @option options [Integer] :polling (5) Seconds for polling the solution.
+    # @option options [String]  :hostname ('api.dbcapi.me') Custom API hostname.
     #
     # @return [DeathByCaptcha::Client] A Client instance.
     #
@@ -51,7 +52,7 @@ module DeathByCaptcha
       self.password   = password
       self.timeout    = options[:timeout] || 60
       self.polling    = options[:polling] || 5
-      self.hostname   = ENV.fetch('DBC_HOSTNAME', 'api.dbcapi.me')
+      self.hostname   = options[:hostname] || 'api.dbcapi.me'
     end
 
     # Decode the text from an image (i.e. solve a captcha).
