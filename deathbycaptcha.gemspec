@@ -6,7 +6,7 @@ require 'deathbycaptcha/version'
 Gem::Specification.new do |spec|
   spec.name          = "deathbycaptcha"
   spec.version       = DeathByCaptcha::VERSION
-  spec.authors       = ["Débora Setton Fernandes, Marcelo Mita, Rafael Barbolo, Rafael Ivan Garcia"]
+  spec.authors       = ["Rafael Barbolo, Rafael Ivan Garcia"]
   spec.email         = ["team@infosimples.com.br"]
   spec.summary       = %q{Ruby API for DeathByCaptcha (Captcha Solver as a Service)}
   spec.description   = %q{DeathByCaptcha allows you to solve captchas with manual labor}
