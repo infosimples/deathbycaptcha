@@ -182,6 +182,52 @@ something like:
 [1, 9]
 ```
 
+
+## New Recaptcha by Token API
+
+> It's currently available only with the :http client.
+
+To solve captchas similar to
+[reCAPTCHA v2](https://support.google.com/recaptcha/?hl=en#6262736), you can also use
+**Token API**
+
+Please, read the oficial documentation at
+http://deathbycaptcha.com/user/api/newtokenrecaptcha
+
+### Using the Token API
+
+```ruby
+# Read above all the instructions on how to solve a captcha.
+captcha = client.decode!(type: 4, token_params: {
+    proxy: "http://127.0.0.1:3128",
+    proxytype: "HTTP",
+    googlekey: "6Le-wvkSAAAAAPBMRTvw0Q4Muexq9bi0DJwx_mJ-",
+    pageurl: "http://test.com/path_with_recaptcha"
+  })
+```
+
+You should specify arguments with *type = 4* and an all token params required by DBC API
+
+The response will be a text (token), which you can access with  **text** or **token** method.
+
+```ruby
+# captcha.text
+"03AOPBWq_RPO2vLzyk0h8gH0cA2X4v3tpYCPZR6Y4yxKy1s3Eo7CHZRQntxrd
+saD2H0e6S3547xi1FlqJB4rob46J0-wfZMj6YpyVa0WGCfpWzBWcLn7tO_EYs
+vEC_3kfLNINWa5LnKrnJTDXTOz-JuCKvEXx0EQqzb0OU4z2np4uyu79lc_Ndv
+L0IRFc3Cslu6UFV04CIfqXJBWCE5MY0Ag918r14b43ZdpwHSaVVrUqzCQMCyb
+cGq0yxLQf9eSexFiAWmcWLI5nVNA81meTXhQlyCn5bbbI2IMSEErDqceZjf1m
+X3M67BhIb4"
+
+# captcha.token
+"03AOPBWq_RPO2vLzyk0h8gH0cA2X4v3tpYCPZR6Y4yxKy1s3Eo7CHZRQntxrd
+saD2H0e6S3547xi1FlqJB4rob46J0-wfZMj6YpyVa0WGCfpWzBWcLn7tO_EYs
+vEC_3kfLNINWa5LnKrnJTDXTOz-JuCKvEXx0EQqzb0OU4z2np4uyu79lc_Ndv
+L0IRFc3Cslu6UFV04CIfqXJBWCE5MY0Ag918r14b43ZdpwHSaVVrUqzCQMCyb
+cGq0yxLQf9eSexFiAWmcWLI5nVNA81meTXhQlyCn5bbbI2IMSEErDqceZjf1m
+X3M67BhIb4"
+```
+
 ## Notes
 
 #### Thread-safety

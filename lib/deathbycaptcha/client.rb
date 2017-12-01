@@ -86,8 +86,12 @@ module DeathByCaptcha
     def decode!(options = {})
       started_at = Time.now
 
-      raw64 = load_captcha(options)
-      raise DeathByCaptcha::InvalidCaptcha if raw64.to_s.empty?
+      # don't load image data for Token API
+      raw64 = nil
+      unless options[:type] == 4
+        raw64 = load_captcha(options)
+        raise DeathByCaptcha::InvalidCaptcha if raw64.to_s.empty?
+      end
 
       decoded_captcha = self.upload(options.merge(raw64: raw64))
 

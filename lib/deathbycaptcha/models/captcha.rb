@@ -24,5 +24,6 @@ module DeathByCaptcha
     end
     alias_method :coordinates, :parsed_text
     alias_method :indexes, :parsed_text
+    alias_method :token, :text
   end
 end

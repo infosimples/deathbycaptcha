@@ -63,6 +63,13 @@ module DeathByCaptcha
         payload[:banner_text] = options[:banner_text].to_s
       end
 
+      if options[:type].to_i == 4
+        payload = {
+          type: 4,
+          token_params: options[:token_params].to_json,
+        }
+      end
+
       response = perform('captcha', :post_multipart, payload)
       DeathByCaptcha::Captcha.new(response)
     end
