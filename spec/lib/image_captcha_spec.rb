@@ -7,10 +7,10 @@ path3_grid    = './captchas/3-grid.jpg' # path of the grid (Image Group API)
 path3_banner  = './captchas/3-banner.jpg' # path of the grid (Image Group API)
 banner_text3  = 'Click all images with bananas'
 token_params = {
-  proxy: "http://127.0.0.1:3128",
-  proxytype: "HTTP",
-  googlekey: "6Le-wvkSAAAAAPBMRTvw0Q4Muexq9bi0DJwx_mJ-",
-  pageurl: "http://test.com/path_with_recaptcha"
+  #proxy: "http://127.0.0.1:3128",
+  #proxytype: "HTTP",
+  googlekey: "6Ld2sf4SAAAAAKSgzs0Q13IZhY02Pyo31S2jgOB5",
+  pageurl: "https://patrickhlauke.github.io/recaptcha/"
 }
 
 describe 'Solving an image based captcha' do
@@ -69,8 +69,9 @@ describe 'Solving an image based captcha' do
         )
       end
       it { expect(@captcha).to be_a(DeathByCaptcha::Captcha) }
-      it { expect(@captcha.text).to match(/\A\[.*\]\Z/) }
-      it { expect(@captcha.token).to match(/\A\[.*\]\Z/) }
+      it { expect(@captcha.text).to eq(@captcha.token) }
+      it { expect(@captcha.token).to match(/\A"?\S+"?\Z/) }
+      it { expect(@captcha.token.size).to be > 30 }
       it { expect(@captcha.is_correct).to be true }
       it { expect(@captcha.id).to be > 0 }
       it { expect(@captcha.id).to eq(@captcha.captcha) }

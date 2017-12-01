@@ -228,6 +228,9 @@ cGq0yxLQf9eSexFiAWmcWLI5nVNA81meTXhQlyCn5bbbI2IMSEErDqceZjf1m
 X3M67BhIb4"
 ```
 
+> Those captchas sometimes took more than 60 seconds to solve
+> So consider increasing the client's *timeout* 
+
 ## Notes
 
 #### Thread-safety
