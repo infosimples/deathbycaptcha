@@ -199,10 +199,11 @@ http://deathbycaptcha.com/user/api/newtokenrecaptcha
 ```ruby
 # Read above all the instructions on how to solve a captcha.
 captcha = client.decode!(type: 4, token_params: {
-    proxy: "http://127.0.0.1:3128",
-    proxytype: "HTTP",
-    googlekey: "6Le-wvkSAAAAAPBMRTvw0Q4Muexq9bi0DJwx_mJ-",
-    pageurl: "http://test.com/path_with_recaptcha"
+    # optional proxy if needed and server verifies
+    #proxy: "http://127.0.0.1:3128",
+    #proxytype: "HTTP",
+    googlekey: "6Ld2sf4SAAAAAKSgzs0Q13IZhY02Pyo31S2jgOB5",
+    pageurl: "https://patrickhlauke.github.io/recaptcha/"
   })
 ```
 
