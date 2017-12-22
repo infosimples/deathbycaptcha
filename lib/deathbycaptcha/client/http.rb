@@ -61,9 +61,8 @@ module DeathByCaptcha
 
         payload[:banner] = "base64:#{banner64}"
         payload[:banner_text] = options[:banner_text].to_s
-      end
 
-      if options[:type].to_i == 4
+      elsif options[:type].to_i == 4
         payload = {
           type: 4,
           token_params: options[:token_params].to_json,

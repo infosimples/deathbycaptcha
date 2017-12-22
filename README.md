@@ -182,7 +182,6 @@ something like:
 [1, 9]
 ```
 
-
 ## New Recaptcha by Token API
 
 > It's currently available only with the :http client.
@@ -230,7 +229,7 @@ X3M67BhIb4"
 ```
 
 > Those captchas sometimes took more than 60 seconds to solve
-> So consider increasing the client's *timeout* 
+> So consider increasing the client's *timeout*
 
 ## Notes
 
@@ -287,14 +286,6 @@ This gem has been tested on the following versions of Ruby:
 * MRI 2.1.5
 * MRI 2.0.0
 * MRI 1.9.3
-
-# Maintainers
-
-* [Débora Setton Fernandes](http://github.com/deborasetton)
-* [Marcelo Mita](http://github.com/marcelomita)
-* [Rafael Barbolo](http://github.com/barbolo)
-* [Rafael Ivan Garcia](http://github.com/rafaelivan)
-
 
 ## Contributing
 
