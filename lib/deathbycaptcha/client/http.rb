@@ -62,9 +62,9 @@ module DeathByCaptcha
         payload[:banner] = "base64:#{banner64}"
         payload[:banner_text] = options[:banner_text].to_s
 
-      elsif options[:type].to_i == 4
+      elsif [4, 5].include? options[:type].to_i
         payload = {
-          type: 4,
+          type: options[:type].to_i,
           token_params: options[:token_params].to_json,
         }
       end
