@@ -1,9 +1,9 @@
-> DeathByCaptcha is recommended for solving the most popular CAPTCHA types,
-> such as image to text, reCAPTCHA v2, reCAPTCHA v3, hCaptcha and FunCaptcha.
-
 # DeathByCaptcha
 
 DeathByCaptcha is a Ruby API for DeathByCaptcha - http://www.deathbycaptcha.com
+
+> DeathByCaptcha is recommended for solving the most popular CAPTCHA types,
+> such as image to text, reCAPTCHA v2, reCAPTCHA v3, hCaptcha and FunCaptcha.
 
 ## Installation
 
@@ -12,6 +12,7 @@ Add this line to your application's Gemfile:
 ```ruby
 gem 'deathbycaptcha', '~> 6.0.0'
 ```
+
 And then execute:
 
 ```bash
@@ -42,14 +43,14 @@ There are two types of methods available: `decode_*` and `decode_*!`:
 If the solution is not available, an empty CAPTCHA object will be returned.
 
 ```ruby
-captcha = client.decode_image!(url: 'http://bit.ly/1xXZcKo')
+captcha = client.decode_image!(path: 'path/to/my/captcha/file')
 captcha.text # CAPTCHA solution
 captcha.id   # CAPTCHA numeric id
 ```
 
 #### Image CAPTCHA
 
-You can specify `url`, `path`, `file`, `raw` and `raw64` when decoding an image.
+You can specify `url`, `path`, `file`, `raw` or `raw64` when decoding an image.
 
 ```ruby
 client.decode_image!(url: 'http://bit.ly/1xXZcKo')
