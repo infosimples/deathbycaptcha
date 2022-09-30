@@ -1,291 +1,263 @@
-Developed by [Infosimples](https://infosimples.com), a brazilian company that
-offers [data extraction solutions](https://infosimples.com/en/data-engineering).
-
-We suggest you to also check [2Captcha.com](http://2captcha.com/?from=1025109)
-for a cheaper service. You can find it's gem fully compatible with the
-deathbycaptcha gem at https://github.com/infosimples/two_captcha.
-
-[Contact us](https://infosimples.com/en) if you need enterprise services for
-CAPTCHAs solving or Internet automation.
-
+> DeathByCaptcha is recommended for solving the most popular CAPTCHA types,
+> such as image to text, reCAPTCHA v2, reCAPTCHA v3, hCaptcha and FunCaptcha.
 
 # DeathByCaptcha
 
-DeathByCaptcha is a Ruby API for DeathByCaptcha - http://www.deathbycaptcha.com.
-
+DeathByCaptcha is a Ruby API for DeathByCaptcha - http://www.deathbycaptcha.com
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'deathbycaptcha', '~> 5.0.0'
+gem 'deathbycaptcha', '~> 6.0.0'
 ```
-
 And then execute:
 
-    $ bundle
+```bash
+$ bundle
+````
 
 Or install it yourself as:
 
-    $ gem install deathbycaptcha
+```bash
+$ gem install deathbycaptcha
+````
 
 ## Usage
 
-1. **Create a client**
-
-  ```ruby
-  # Create a client (:socket and :http clients are available)
-  client = DeathByCaptcha.new('myusername', 'mypassword', :http)
-  ```
-
-2. **Solve a captcha**
-
-  There are two methods available: **decode** and **decode!**
-    * **decode** doesn't raise exceptions.
-    * **decode!** may raise a *DeathByCaptcha::Error* if something goes wrong.
-
-  If the solution is not available, an empty captcha object will be returned.
-
-  ```ruby
-  captcha = client.decode!(url: 'http://bit.ly/1xXZcKo')
-  captcha.text        # Solution of the captcha
-  captcha.id          # Numeric ID of the captcha solved by DeathByCaptcha
-  captcha.is_correct  # true if the solution is correct
-  ```
-
-  You can also specify *path*, *file*, *raw* and *raw64* when decoding an image.
-
-  ```ruby
-  client.decode!(path: 'path/to/my/captcha/file')
-
-  client.decode!(file: File.open('path/to/my/captcha/file', 'rb'))
-
-  client.decode!(raw: File.open('path/to/my/captcha/file', 'rb').read)
-
-  client.decode!(raw64: Base64.encode64(File.open('path/to/my/captcha/file', 'rb').read))
-  ```
-
-  > Internally, the gem will always convert any image to raw64 (binary base64
-  encoded).
-
-3. **Retrieve a previously solved captcha**
-
-  ```ruby
-  captcha = client.captcha('130920620') # with 130920620 as the captcha id
-  ```
-
-4. **Report incorrectly solved captcha for refund**
-
-  ```ruby
-  captcha = client.report!('130920620') # with 130920620 as the captcha id
-  ```
-
-  > ***Warning:*** *do not abuse on this method, otherwise you may get banned*
-
-5. **Retrieve your user information (which has the current credit balance)**
-
-  ```ruby
-  user = client.user()
-  user.is_banned  # true if the user is banned
-  user.balance    # Credit balance in US cents
-  user.rate       # Captcha rate, i.e. charges for one solved captcha in US cents
-  user.id         # Numeric ID of your account
-  ```
-
-6. **Retrieve DeathByCaptcha server status**
-
-  ```ruby
-  status = client.status()
-  status.todays_accuracy        # Current accuracy of DeathByCaptcha
-  status.solved_in              # Estimated seconds to solve a captcha right now
-  status.is_service_overloaded  # true if DeathByCaptcha is overloaded/unresponsive
-  ```
-
-## New reCAPTCHA
-
-> It's currently available only with the :http client.
-
-To solve captchas similar to
-[reCAPTCHA v2](https://support.google.com/recaptcha/?hl=en#6262736), you can use
-both the DeathByCaptcha's **Coordinates API** or **Image Group API**.
-
-Please, read the oficial documentation at
-http://www.deathbycaptcha.com/user/api/newrecaptcha.
-
-### Using the Coordinates API
+### 1. Create a client
 
 ```ruby
-# Read above all the instructions on how to solve a captcha.
-captcha = client.decode!(type: 2, url: 'http://bit.ly/1VCUuzk')
+client = DeathByCaptcha.new('myusername', 'mypassword')
 ```
 
-You should specify arguments with *type = 2* and an image similar to a screenshot of
-the captcha. See an example:
+### 2. Solve a CAPTCHA
 
-**Captcha (screenshot)**
+There are two types of methods available: `decode_*` and `decode_*!`:
 
-> the argument is passed as *url*, *path*, *file*, *raw* or *raw64*
+- `decode_*` does not raise exceptions.
+- `decode_*!` may raise a `DeathByCaptcha::Error` if something goes wrong.
 
-![Example of a captcha based on image clicks](captchas/2.jpg)
-
-The response will be an array containing coordinates (x, y) where the human
-clicked to solve the captcha. For the captcha above it should look something
-like:
+If the solution is not available, an empty CAPTCHA object will be returned.
 
 ```ruby
-# captcha.text
-"[[30,143],[241,325]]"
-
-# captcha.coordinates
-[[30, 143], [241, 325]]
+captcha = client.decode_image!(url: 'http://bit.ly/1xXZcKo')
+captcha.text # CAPTCHA solution
+captcha.id   # CAPTCHA numeric id
 ```
 
-### Using the Image Group API
+#### Image CAPTCHA
+
+You can specify `url`, `path`, `file`, `raw` and `raw64` when decoding an image.
 
 ```ruby
-# Read above all the instructions on how to solve a captcha.
-captcha = client.decode!(
-  type: 3,
-  url: 'http://bit.ly/1i1CIaB', # single image with the clickable grid
-  banner: { url: 'http://bit.ly/1JTG4T3' }, # the banner image
-  banner_text: 'Click all images with bananas' # the banner text
+client.decode_image!(url: 'http://bit.ly/1xXZcKo')
+client.decode_image!(path: 'path/to/my/captcha/file')
+client.decode_image!(file: File.open('path/to/my/captcha/file', 'rb'))
+client.decode_image!(raw: File.open('path/to/my/captcha/file', 'rb').read)
+client.decode_image!(raw64: Base64.encode64(File.open('path/to/my/captcha/file', 'rb').read))
+```
+
+#### reCAPTCHA v2
+
+```ruby
+captcha = client.decode_recaptcha_v2!(
+  googlekey:   "6Ld2sf4SAAAAAKSgzs0Q13IZhY02Pyo31S2jgOB5",
+  pageurl:     "https://patrickhlauke.github.io/recaptcha/",
+  # proxy:     "http://user:password@127.0.0.1:3128", # OPTIONAL
+  # proxytype: "HTTP",                                # OPTIONAL
 )
+
+# The response will be a text (token), which you can access with `text` or `token` methods.
+
+captcha.text
+"03AOPBWq_RPO2vLzyk0h8gH0cA2X4v3tpYCPZR6Y4yxKy1s3Eo7CHZRQntxrd..."
+
+captcha.token
+"03AOPBWq_RPO2vLzyk0h8gH0cA2X4v3tpYCPZR6Y4yxKy1s3Eo7CHZRQntxrd..."
 ```
 
-You should specify arguments with *type = 3* and the decomposed captcha as seen in the
-example below:
+*Parameters:*
 
-**Captcha: images grid**
+- `googlekey`: The Google key for the reCAPTCHA.
+- `pageurl`: The URL of the page with the reCAPTCHA challenge.
+- `proxy`: optional parameter. Proxy URL and credentials (if any).
+- `proxytype`: optional parameter. Proxy connection protocol.
 
-> the argument is passed as *url*, *path*, *file*, *raw* or *raw64*
-
-![Example of a grid of a captcha based on image clicks](captchas/3-grid.jpg)
-
-**Captcha: banner**
-
-![Example of a banner of a captcha based on image clicks](captchas/3-banner.jpg)
-
-**Captcha: banner text**
-
-> Click all images with bananas
-
-The response will be an array containing the indexes for each image that should
-be clicked counting from left to right. For the captcha above it should look
-something like:
+#### reCAPTCHA v3
 
 ```ruby
-# captcha.text
-"[1,9]"
+captcha = client.decode_recaptcha_v3!(
+  googlekey:   "6LdyC2cUAAAAACGuDKpXeDorzUDWXmdqeg-xy696",
+  pageurl:     "https://recaptcha-demo.appspot.com/recaptcha-v3-request-scores.php",
+  action:      "examples/v3scores",
+  # min_score:   0.3,                                 # OPTIONAL
+  # proxy:     "http://user:password@127.0.0.1:3128", # OPTIONAL
+  # proxytype: "HTTP",                                # OPTIONAL
+)
 
-# captcha.indexes
-[1, 9]
+# The response will be a text (token), which you can access with `text` or `token` methods.
+
+captcha.text
+"03AOPBWq_RPO2vLzyk0h8gH0cA2X4v3tpYCPZR6Y4yxKy1s3Eo7CHZRQntxrd..."
+
+captcha.token
+"03AOPBWq_RPO2vLzyk0h8gH0cA2X4v3tpYCPZR6Y4yxKy1s3Eo7CHZRQntxrd..."
 ```
 
-## New Recaptcha by Token API
+*Parameters:*
 
-> It's currently available only with the :http client.
+- `googlekey`: The Google key for the reCAPTCHA.
+- `pageurl`: The URL of the page with the reCAPTCHA challenge.
+- `action`: The action name used by the CAPTCHA.
+- `min_score`: optional parameter. The minimal score needed for the CAPTCHA resolution. Defaults to `0.3`.
+- `proxy`: optional parameter. Proxy URL and credentials (if any).
+- `proxytype`: optional parameter. Proxy connection protocol.
 
-To solve captchas similar to
-[reCAPTCHA v2](https://support.google.com/recaptcha/?hl=en#6262736), you can also use
-**Token API**
+> About the `action` parameter: in order to find out what this is, you need to inspect the JavaScript
+> code of the website looking for a call to the `grecaptcha.execute` function.
+>
+> ```javascript
+> // Example
+> grecaptcha.execute('6Lc2fhwTAAAAAGatXTzFYfvlQMI2T7B6ji8UVV_f', { action: "examples/v3scores" })
+> ````
 
-Please, read the oficial documentation at
-http://deathbycaptcha.com/user/api/newtokenrecaptcha
-
-### Using the Token API
+#### hCaptcha
 
 ```ruby
-# Read above all the instructions on how to solve a captcha.
-captcha = client.decode!(type: 4, token_params: {
-    # optional proxy if needed and server verifies
-    #proxy: "http://127.0.0.1:3128",
-    #proxytype: "HTTP",
-    googlekey: "6Ld2sf4SAAAAAKSgzs0Q13IZhY02Pyo31S2jgOB5",
-    pageurl: "https://patrickhlauke.github.io/recaptcha/"
-  })
+captcha = client.decode_h_captcha!(
+  sitekey:     "56489210-0c02-58c0-00e5-1763b63dc9d4",
+  pageurl:     "https://www.site.with.hcaptcha/example",
+  # proxy:     "http://user:password@127.0.0.1:3128", # OPTIONAL
+  # proxytype: "HTTP",                                # OPTIONAL
+)
+
+# The response will be a text (token), which you can access with `text` or `token` methods.
+
+captcha.text
+"P0_eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwYXNza2V5IjoiNnpWV..."
+
+captcha.token
+"P0_eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwYXNza2V5IjoiNnpWV..."
 ```
 
-You should specify arguments with *type = 4* and an all token params required by DBC API
+*Parameters:*
 
-The response will be a text (token), which you can access with  **text** or **token** method.
+- `sitekey`: The site key for the hCatpcha.
+- `pageurl`: The URL of the page with the hCaptcha challenge.
+- `proxy`: optional parameter. Proxy URL and credentials (if any).
+- `proxytype`: optional parameter. Proxy connection protocol.
+
+#### FunCaptcha
 
 ```ruby
-# captcha.text
-"03AOPBWq_RPO2vLzyk0h8gH0cA2X4v3tpYCPZR6Y4yxKy1s3Eo7CHZRQntxrd
-saD2H0e6S3547xi1FlqJB4rob46J0-wfZMj6YpyVa0WGCfpWzBWcLn7tO_EYs
-vEC_3kfLNINWa5LnKrnJTDXTOz-JuCKvEXx0EQqzb0OU4z2np4uyu79lc_Ndv
-L0IRFc3Cslu6UFV04CIfqXJBWCE5MY0Ag918r14b43ZdpwHSaVVrUqzCQMCyb
-cGq0yxLQf9eSexFiAWmcWLI5nVNA81meTXhQlyCn5bbbI2IMSEErDqceZjf1m
-X3M67BhIb4"
+captcha = client.decode_fun_captcha!(
+  publickey:   "12345678-0000-1111-2222-123456789012",
+  pageurl:     "https://www.site.with.funcaptcha/example",
+  # proxy:     "http://user:password@127.0.0.1:3128", # OPTIONAL
+  # proxytype: "HTTP",                                # OPTIONAL
+)
 
-# captcha.token
-"03AOPBWq_RPO2vLzyk0h8gH0cA2X4v3tpYCPZR6Y4yxKy1s3Eo7CHZRQntxrd
-saD2H0e6S3547xi1FlqJB4rob46J0-wfZMj6YpyVa0WGCfpWzBWcLn7tO_EYs
-vEC_3kfLNINWa5LnKrnJTDXTOz-JuCKvEXx0EQqzb0OU4z2np4uyu79lc_Ndv
-L0IRFc3Cslu6UFV04CIfqXJBWCE5MY0Ag918r14b43ZdpwHSaVVrUqzCQMCyb
-cGq0yxLQf9eSexFiAWmcWLI5nVNA81meTXhQlyCn5bbbI2IMSEErDqceZjf1m
-X3M67BhIb4"
+# The response will be a text (token), which you can access with `text` or `token` methods.
+
+captcha.text
+"380633616d817f2b8.2351188603|r=ap-southeast-2|met..."
+
+captcha.token
+"380633616d817f2b8.2351188603|r=ap-southeast-2|met..."
 ```
 
-> Those captchas sometimes took more than 60 seconds to solve
-> So consider increasing the client's *timeout*
+*Parameters:*
+
+- `publickey`: The public key for the FunCaptcha.
+- `pageurl`: The URL of the page with the hCaptcha challenge.
+- `proxy`: optional parameter. Proxy URL and credentials (if any).
+- `proxytype`: optional parameter. Proxy connection protocol.
+
+### 3. Retrieve a previously solved CAPTCHA
+
+```ruby
+captcha = client.captcha('28624378') # with 28624378 being the CAPTCHA id
+```
+
+### 4. Report an incorrectly solved CAPTCHA for a refund
+
+```ruby
+captcha = client.report!('28624378') # with 28624378 being the CAPTCHA id
+```
+
+> **Warning:** *abusing on this method may get you banned.*
+
+### 5. Retrieve your user information and credit balance
+
+```ruby
+user = client.user
+user.is_banned # true if the user is banned
+user.balance   # Credit balance in USD cents
+user.rate      # CAPTCHA rate, i.e. charges for one solved CAPTCHA in USD cents
+user.id        # Numeric id of your account
+```
+
+### 6. Retrieve DeathByCaptcha server status
+
+```ruby
+status = client.status
+status.todays_accuracy       # Current accuracy of DeathByCaptcha
+status.solved_in             # Estimated seconds to solve a CAPTCHA right now
+status.is_service_overloaded # true if DeathByCaptcha is overloaded/unresponsive
+```
 
 ## Notes
 
-#### Thread-safety
+### Thread-safety
 
 The API is thread-safe, which means it is perfectly fine to share a client
 instance between multiple threads.
 
-#### HTTP and Socket clients
+### HTTP and Socket clients
 
-The API supports HTTP and socket-based connections, with the latter being
-recommended for having faster responses and overall better performance. The two
-clients have the same methods/interface.
+The API supports HTTP (recommended) and socket-based connections.
+
+```ruby
+# HTTP-based connection.
+client = DeathByCaptcha.new('myusername', 'mypassword')
+# or
+client = DeathByCaptcha.new('myusername', 'mypassword', :http)
+
+# Socket-based connection.
+client = DeathByCaptcha.new('myusername', 'mypassword', :socket)
+```
 
 When using the socket client, make sure that outgoing TCP traffic to
-**api.dbcapi.me** to the ports in range **8123-8130** is not blocked by your
+`api.dbcapi.me` to the ports in range `8123-8130` is not blocked by your
 firewall.
 
-> We are currently suggesting developers to use HTTP connection because Socket
-> seems to be unstable with older Ruby versions. While we are investigating,
-> consider using only HTTP connection.
+> We strongly recommend using the HTTP client (default) because only image
+> CAPTCHAs (`decode_image!`) are supported by the socket client in this gem.
+> Other CAPTCHA types, such as reCAPTCHA v2, reCAPTCHA v3, hCaptcha and FunCaptcha
+> are supported by the HTTP client only.
 
-#### Ruby dependencies
+### Ruby dependencies
 
-DeathByCaptcha >= 5.0.0 don't require specific dependencies. That saves you
+DeathByCaptcha >= 5.0.0 does not require specific dependencies. That saves you
 memory and avoid conflicts with other gems.
 
-#### Input image format
+### Input image format
 
-Any format you use in the decode method (url, file, path, raw, raw64) will
-always be converted to a raw64, which is a binary base64 encoded string. So, if
-you already have this format available on your side, there's no need to do
-convertions before calling the API.
+Any format you use in the `decode_image!` method (`url`, `file`, `path`, `raw` or `raw64`) will
+always be converted to a `raw64`, which is a base64-encoded binary string. So, if
+you already have this format on your end, there is no need for convertions before
+calling the API.
 
 > Our recomendation is to never convert your image format, unless needed. Let
 > the gem convert internally. It may save you resources (CPU, memory and IO).
 
-#### Versioning
+### Versioning
 
-We no longer follow the versioninig system of the official clients of
-DeathByCaptcha. We have bumped to version 5.0.0 and will use
-[Semantic Versioning](http://semver.org/) from now on.
-
-#### Upgrade from 4.x to 5.x
-
-Any 5.x version is incompatible with any 4.x version. Please, review your code
-before upgrading.
-
-#### Ruby versions
-
-This gem has been tested on the following versions of Ruby:
-
-* MRI 2.2.0
-* MRI 2.1.5
-* MRI 2.0.0
-* MRI 1.9.3
+We no longer follow the versioning system of the official clients of
+DeathByCaptcha. From `5.0.0` onwards, we will use
+[Semantic Versioning](http://semver.org/).
 
 ## Contributing
 

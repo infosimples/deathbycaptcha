@@ -73,10 +73,11 @@ module DeathByCaptcha
     #
     def perform(action, payload = {})
       payload.merge!(
-        cmd: action,
-        version: DeathByCaptcha::API_VERSION,
-        username: self.username,
-        password: self.password
+        cmd:       action,
+        version:   DeathByCaptcha::API_VERSION,
+        username:  self.username,
+        password:  self.password,
+        vendor_id: 5,
       )
 
       socket = create_socket()

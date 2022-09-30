@@ -55,20 +55,36 @@ module DeathByCaptcha
       payload[:captchafile] = "base64:#{options[:raw64]}"
       payload[:type] = options[:type] if options[:type].to_i > 0
 
-      if options[:type].to_i == 3
+      case options[:type].to_i
+      when 3
         banner64 = load_captcha(options[:banner])
         raise DeathByCaptcha::InvalidCaptcha if banner64.to_s.empty?
 
-        payload[:banner] = "base64:#{banner64}"
-        payload[:banner_text] = options[:banner_text].to_s
-
-      elsif [4, 5].include? options[:type].to_i
         payload = {
-          type: options[:type].to_i,
+          banner:      "base64:#{banner64}",
+          banner_text: options[:banner_text].to_s,
+        }
+
+      when 4, 5
+        payload = {
+          type:         options[:type].to_i,
           token_params: options[:token_params].to_json,
+        }
+
+      when 6
+        payload = {
+          type:              options[:type].to_i,
+          funcaptcha_params: options[:funcaptcha_params].to_json,
+        }
+
+      when 7
+        payload = {
+          type:            options[:type].to_i,
+          hcaptcha_params: options[:hcaptcha_params].to_json,
         }
       end
 
+      payload.merge!(vendor_id: 5)
       response = perform('captcha', :post_multipart, payload)
       DeathByCaptcha::Captcha.new(response)
     end
@@ -99,6 +115,7 @@ module DeathByCaptcha
         boundary, body = prepare_multipart_data(payload)
         req.content_type = "multipart/form-data; boundary=#{boundary}"
         req.body = body
+
       else
         uri = URI("http://#{self.hostname}/api/#{action}?#{URI.encode_www_form(payload)}")
         req = Net::HTTP::Get.new(uri.request_uri, headers)

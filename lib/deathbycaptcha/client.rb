@@ -25,7 +25,7 @@ module DeathByCaptcha
     #
     # @return [DeathByCaptcha::Client] A Socket or HTTP Client instance.
     #
-    def self.create(username, password, connection = :socket, options = {})
+    def self.create(username, password, connection = :http, options = {})
       case connection
       when :socket
         DeathByCaptcha::Client::Socket.new(username, password, options)
@@ -75,20 +75,22 @@ module DeathByCaptcha
     # Decode the text from an image (i.e. solve a captcha).
     #
     # @param [Hash] options Options hash.
-    # @option options [String]  :url    URL of the image to be decoded.
-    # @option options [String]  :path   File path of the image to be decoded.
-    # @option options [File]    :file   File instance with image to be decoded.
-    # @option options [String]  :raw    Binary content of the image to be decoded.
-    # @option options [String]  :raw64  Binary content encoded in base64 of the image to be decoded.
+    # @option options [String]  :url           URL of the image to be decoded.
+    # @option options [String]  :path          File path of the image to be decoded.
+    # @option options [File]    :file          File instance with image to be decoded.
+    # @option options [String]  :raw           Binary content of the image to be decoded.
+    # @option options [String]  :raw64         Binary content encoded in base64 of the image to be decoded.
+    # @option options [String]  :type          CAPTCHA type.
+    # @option options [String]  :token_params  Parameters for token APIs (reCAPTCHA / hCaptcha).
     #
     # @return [DeathByCaptcha::Captcha] The captcha (with solution if an error is not raised).
     #
     def decode!(options = {})
       started_at = Time.now
 
-      # don't load image data for Token API v2 & v3
+      # Do not load image data for CAPTCHA types other than "image".
       raw64 = nil
-      unless [4, 5].include? options[:type]
+      if ![4, 5, 6, 7].include?(options[:type])
         raw64 = load_captcha(options)
         raise DeathByCaptcha::InvalidCaptcha if raw64.to_s.empty?
       end
@@ -104,6 +106,74 @@ module DeathByCaptcha
       raise DeathByCaptcha::IncorrectSolution if !decoded_captcha.is_correct
 
       decoded_captcha
+    end
+
+    def decode_image(options = {})
+      decode!(options)
+    rescue DeathByCaptcha::Error
+      DeathByCaptcha::Captcha.new
+    end
+
+    def decode_image!(options = {})
+      decode!(options.slice(:url, :path, :file, :raw, :raw64))
+    end
+
+    def decode_recaptcha_v2(options = {})
+      decode_recaptcha_v2!(options)
+    rescue DeathByCaptcha::Error
+      DeathByCaptcha::Captcha.new
+    end
+
+    def decode_recaptcha_v2!(options = {})
+      options = {
+        type:         4, # reCAPTCHA v2
+        token_params: options.slice(:googlekey, :pageurl, :proxy, :proxytype),
+      }
+      decode!(options)
+    end
+
+    def decode_recaptcha_v3(options = {})
+      decode_recaptcha_v3!(options)
+    rescue DeathByCaptcha::Error
+      DeathByCaptcha::Captcha.new
+    end
+
+    def decode_recaptcha_v3!(options = {})
+      options = {
+        type:         5, # reCAPTCHA v3
+        token_params: {
+          min_score: 0.3,
+        }.merge(options.slice(:googlekey, :pageurl, :action, :min_score, :proxy, :proxytype)),
+      }
+      decode!(options)
+    end
+
+    def decode_h_captcha(options = {})
+      decode_recaptcha_h_captcha!(options)
+    rescue DeathByCaptcha::Error
+      DeathByCaptcha::Captcha.new
+    end
+
+    def decode_h_captcha!(options = {})
+      options = {
+        type:            7, # hCaptcha
+        hcaptcha_params: options.slice(:sitekey, :pageurl, :proxy, :proxytype),
+      }
+      decode!(options)
+    end
+
+    def decode_fun_captcha(options = {})
+      decode_fun_captcha!(options)
+    rescue DeathByCaptcha::Error
+      DeathByCaptcha::Captcha.new
+    end
+
+    def decode_fun_captcha!(options = {})
+      options = {
+        type:              6, # FunCaptcha
+        funcaptcha_params: options.slice(:publickey, :pageurl, :proxy, :proxytype),
+      }
+      decode!(options)
     end
 
     # Retrieve information from an uploaded captcha.
