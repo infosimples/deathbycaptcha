@@ -81,8 +81,8 @@ captcha.token
 
 *Parameters:*
 
-- `googlekey`: The Google key for the reCAPTCHA.
-- `pageurl`: The URL of the page with the reCAPTCHA challenge.
+- `googlekey`: the Google key for the reCAPTCHA.
+- `pageurl`: the URL of the page with the reCAPTCHA challenge.
 - `proxy`: optional parameter. Proxy URL and credentials (if any).
 - `proxytype`: optional parameter. Proxy connection protocol.
 
@@ -109,9 +109,9 @@ captcha.token
 
 *Parameters:*
 
-- `googlekey`: The Google key for the reCAPTCHA.
-- `pageurl`: The URL of the page with the reCAPTCHA challenge.
-- `action`: The action name used by the CAPTCHA.
+- `googlekey`: the Google key for the reCAPTCHA.
+- `pageurl`: the URL of the page with the reCAPTCHA challenge.
+- `action`: the action name used by the CAPTCHA.
 - `min_score`: optional parameter. The minimal score needed for the CAPTCHA resolution. Defaults to `0.3`.
 - `proxy`: optional parameter. Proxy URL and credentials (if any).
 - `proxytype`: optional parameter. Proxy connection protocol.
@@ -123,6 +123,9 @@ captcha.token
 > // Example
 > grecaptcha.execute('6Lc2fhwTAAAAAGatXTzFYfvlQMI2T7B6ji8UVV_f', { action: "examples/v3scores" })
 > ````
+
+> About the `min_score` parameter: it's strongly recommended to use a minimum score of `0.3` as higher
+> scores are rare.
 
 #### hCaptcha
 
@@ -145,8 +148,8 @@ captcha.token
 
 *Parameters:*
 
-- `sitekey`: The site key for the hCatpcha.
-- `pageurl`: The URL of the page with the hCaptcha challenge.
+- `sitekey`: the site key for the hCatpcha.
+- `pageurl`: the URL of the page with the hCaptcha challenge.
 - `proxy`: optional parameter. Proxy URL and credentials (if any).
 - `proxytype`: optional parameter. Proxy connection protocol.
 
@@ -171,8 +174,8 @@ captcha.token
 
 *Parameters:*
 
-- `publickey`: The public key for the FunCaptcha.
-- `pageurl`: The URL of the page with the hCaptcha challenge.
+- `publickey`: the public key for the FunCaptcha.
+- `pageurl`: the URL of the page with the hCaptcha challenge.
 - `proxy`: optional parameter. Proxy URL and credentials (if any).
 - `proxytype`: optional parameter. Proxy connection protocol.
 
