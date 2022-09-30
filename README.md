@@ -275,4 +275,4 @@ https://github.com/infosimples/deathbycaptcha/graphs/contributors
 
 # License
 
-MIT License. Copyright (C) 2011-2015 Infosimples. https://infosimples.com/
+MIT License. Copyright (C) 2011-2022 Infosimples. https://infosimples.com/
