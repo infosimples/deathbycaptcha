@@ -76,12 +76,6 @@ module DeathByCaptcha
           type:              options[:type].to_i,
           funcaptcha_params: options[:funcaptcha_params].to_json,
         }
-
-      when 7
-        payload = {
-          type:            options[:type].to_i,
-          hcaptcha_params: options[:hcaptcha_params].to_json,
-        }
       end
 
       payload.merge!(vendor_id: 5)

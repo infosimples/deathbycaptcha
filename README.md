@@ -3,7 +3,7 @@
 DeathByCaptcha is a Ruby API for DeathByCaptcha - http://www.deathbycaptcha.com
 
 > DeathByCaptcha is recommended for solving the most popular CAPTCHA types,
-> such as image to text, reCAPTCHA v2, reCAPTCHA v3, hCaptcha and FunCaptcha.
+> such as image to text, reCAPTCHA v2, reCAPTCHA v3 and FunCaptcha.
 
 ## Installation
 
@@ -127,32 +127,6 @@ captcha.token
 > About the `min_score` parameter: it's strongly recommended to use a minimum score of `0.3` as higher
 > scores are rare.
 
-#### hCaptcha
-
-```ruby
-captcha = client.decode_h_captcha!(
-  sitekey:     "56489210-0c02-58c0-00e5-1763b63dc9d4",
-  pageurl:     "https://www.site.with.hcaptcha/example",
-  # proxy:     "http://user:password@127.0.0.1:3128", # OPTIONAL
-  # proxytype: "HTTP",                                # OPTIONAL
-)
-
-# The response will be a text (token), which you can access with `text` or `token` methods.
-
-captcha.text
-"P0_eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwYXNza2V5IjoiNnpWV..."
-
-captcha.token
-"P0_eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwYXNza2V5IjoiNnpWV..."
-```
-
-*Parameters:*
-
-- `sitekey`: the site key for the hCatpcha.
-- `pageurl`: the URL of the page with the hCaptcha challenge.
-- `proxy`: optional parameter. Proxy URL and credentials (if any).
-- `proxytype`: optional parameter. Proxy connection protocol.
-
 #### FunCaptcha
 
 ```ruby
@@ -175,7 +149,7 @@ captcha.token
 *Parameters:*
 
 - `publickey`: the public key for the FunCaptcha.
-- `pageurl`: the URL of the page with the hCaptcha challenge.
+- `pageurl`: the URL of the page with the challenge.
 - `proxy`: optional parameter. Proxy URL and credentials (if any).
 - `proxytype`: optional parameter. Proxy connection protocol.
 
@@ -239,8 +213,7 @@ firewall.
 
 > We strongly recommend using the HTTP client (default) because only image
 > CAPTCHAs (`decode_image!`) are supported by the socket client in this gem.
-> Other CAPTCHA types, such as reCAPTCHA v2, reCAPTCHA v3, hCaptcha and FunCaptcha
-> are supported by the HTTP client only.
+> Other CAPTCHA types are supported by the HTTP client only.
 
 ### Ruby dependencies
 

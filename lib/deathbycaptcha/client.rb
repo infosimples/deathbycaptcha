@@ -81,7 +81,7 @@ module DeathByCaptcha
     # @option options [String]  :raw           Binary content of the image to be decoded.
     # @option options [String]  :raw64         Binary content encoded in base64 of the image to be decoded.
     # @option options [String]  :type          CAPTCHA type.
-    # @option options [String]  :token_params  Parameters for token APIs (reCAPTCHA / hCaptcha).
+    # @option options [String]  :token_params  Parameters for token APIs.
     #
     # @return [DeathByCaptcha::Captcha] The captcha (with solution if an error is not raised).
     #
@@ -144,20 +144,6 @@ module DeathByCaptcha
         token_params: {
           min_score: 0.3,
         }.merge(options.slice(:googlekey, :pageurl, :action, :min_score, :proxy, :proxytype)),
-      }
-      decode!(options)
-    end
-
-    def decode_h_captcha(options = {})
-      decode_recaptcha_h_captcha!(options)
-    rescue DeathByCaptcha::Error
-      DeathByCaptcha::Captcha.new
-    end
-
-    def decode_h_captcha!(options = {})
-      options = {
-        type:            7, # hCaptcha
-        hcaptcha_params: options.slice(:sitekey, :pageurl, :proxy, :proxytype),
       }
       decode!(options)
     end
